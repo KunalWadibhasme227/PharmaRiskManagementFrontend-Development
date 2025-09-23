@@ -1,0 +1,29 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Recent Activities</app-card-title>
+    <app-card-description>Timeline of latest supplier and audit activities</app-card-description>
+  </app-card-header>
+  <app-card-content>
+    <app-scroll-area class="h-80">
+      <div class="activity-timeline">
+        <div *ngFor="let activity of activities; trackBy: trackByActivityId" class="activity-item">
+          <div [class]="getActivityColor(activity.status)"></div>
+          <div class="activity-content">
+            <div class="activity-header">
+              <div class="activity-details">
+                <p class="activity-title">{{ activity.title }}</p>
+                <p class="activity-description">{{ activity.description }}</p>
+                <p class="activity-timestamp">{{ activity.timestamp }}</p>
+              </div>
+              <div class="activity-badge">
+                <app-badge [variant]="getStatusBadgeVariant(activity.status)">
+                  {{ getStatusBadgeText(activity.status) }}
+                </app-badge>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-scroll-area>
+  </app-card-content>
+</app-card>

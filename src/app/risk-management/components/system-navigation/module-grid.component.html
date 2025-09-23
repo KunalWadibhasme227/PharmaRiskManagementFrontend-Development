@@ -1,0 +1,40 @@
+<div class="module-grid">
+  <app-card
+    *ngFor="let module of modules; trackBy: trackByModuleId"
+    className="module-card">
+    <app-card-header>
+      <div class="module-header">
+        <div class="module-info">
+          <div class="module-icon-container">
+            <div class="module-icon">{{ module.icon }}</div>
+          </div>
+          <div class="module-title-section">
+            <app-card-title className="module-title">{{ module.name }}</app-card-title>
+          </div>
+        </div>
+        <app-badge [variant]="getStatusBadgeVariant(module.status)">
+          {{ getStatusBadgeText(module.status) }}
+        </app-badge>
+      </div>
+    </app-card-header>
+    <app-card-content className="module-content">
+      <p class="module-description">{{ module.description }}</p>
+      <div class="module-features">
+        <h5 class="features-title">Key Features:</h5>
+        <ul class="features-list">
+          <li *ngFor="let feature of module.keyFeatures; let i = index" class="feature-item">
+            <div class="feature-bullet"></div>
+            <span class="feature-text">{{ feature }}</span>
+          </li>
+        </ul>
+      </div>
+      <app-button
+        className="module-button"
+        [variant]="getButtonVariant(module.status)"
+        [disabled]="module.status === 'coming-soon'"
+        (onClick)="onModuleClick(module)">
+        {{ getButtonText(module.status) }}
+      </app-button>
+    </app-card-content>
+  </app-card>
+</div>

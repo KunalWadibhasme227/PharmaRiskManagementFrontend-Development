@@ -1,0 +1,30 @@
+<div class="risk-page">
+  <div class="risk-content">
+    <app-dashboard-header
+      title="Risk Monitoring"
+      subtitle="Real-time monitoring of quality risk metrics across all suppliers">
+    </app-dashboard-header>
+
+    <main class="risk-main">
+      <!-- Key Metrics -->
+      <section class="metrics-section">
+        <h2 class="section-title">Key Metrics</h2>
+        <div class="metrics-grid">
+          <app-card *ngFor="let metric of keyMetrics; trackBy: trackByMetricTitle">
+            <app-card-header className="metric-header">
+              <app-card-title className="metric-title">{{ metric.title }}</app-card-title>
+              <div class="metric-icon">{{ metric.icon }}</div>
+            </app-card-header>
+            <app-card-content>
+              <div class="metric-value">{{ metric.value }}</div>
+              <p class="metric-description">{{ metric.description }}</p>
+            </app-card-content>
+          </app-card>
+        </div>
+      </section>
+
+      <!-- Risk Alerts -->
+      <app-risk-alerts></app-risk-alerts>
+    </main>
+  </div>
+</div>

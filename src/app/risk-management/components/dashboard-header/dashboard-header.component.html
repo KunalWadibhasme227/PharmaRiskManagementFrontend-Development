@@ -1,0 +1,49 @@
+<header class="dashboard-header">
+  <div class="header-left">
+    <h1 class="header-title">{{ title }}</h1>
+    <p *ngIf="subtitle" class="header-subtitle">{{ subtitle }}</p>
+  </div>
+
+  <div class="header-right">
+    <!-- Search -->
+    <div class="search-container">
+      <app-search-icon class="search-icon"></app-search-icon>
+      <app-input placeholder="Search..." class="search-input"></app-input>
+    </div>
+
+    <!-- Notifications -->
+    <app-button variant="ghost" size="sm" class="notification-button">
+      <app-bell-icon class="icon"></app-bell-icon>
+      <app-badge class="notification-badge">
+        3
+      </app-badge>
+    </app-button>
+
+    <!-- Settings -->
+    <app-button variant="ghost" size="sm">
+      <app-settings-icon class="icon"></app-settings-icon>
+    </app-button>
+
+    <!-- User Menu -->
+    <app-dropdown-menu>
+      <app-dropdown-menu-trigger trigger>
+        <app-button variant="ghost" size="sm" class="user-button">
+          <app-user-icon class="icon"></app-user-icon>
+        </app-button>
+      </app-dropdown-menu-trigger>
+      <app-dropdown-menu-content content class="user-menu">
+        <app-dropdown-menu-label>
+          <div class="user-info">
+            <p class="user-name">John Doe</p>
+            <p class="user-role">Quality Manager</p>
+          </div>
+        </app-dropdown-menu-label>
+        <app-dropdown-menu-separator></app-dropdown-menu-separator>
+        <app-dropdown-menu-item>Profile</app-dropdown-menu-item>
+        <app-dropdown-menu-item>Settings</app-dropdown-menu-item>
+        <app-dropdown-menu-separator></app-dropdown-menu-separator>
+        <app-dropdown-menu-item>Log out</app-dropdown-menu-item>
+      </app-dropdown-menu-content>
+    </app-dropdown-menu>
+  </div>
+</header>

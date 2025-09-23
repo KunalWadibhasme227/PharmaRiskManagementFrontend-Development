@@ -1,0 +1,124 @@
+<div class="regulatory-page">
+  <div class="regulatory-content">
+    <app-dashboard-header
+      title="Regulatory Compliance"
+      subtitle="Track regulatory requirements and compliance status">
+    </app-dashboard-header>
+
+    <main class="regulatory-main">
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="regulatory-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="regulations" [isActive]="activeTab === 'regulations'" (tabClick)="onTabChange($event)">Regulations</app-tabs-trigger>
+          <app-tabs-trigger value="requirements" [isActive]="activeTab === 'requirements'" (tabClick)="onTabChange($event)">Requirements</app-tabs-trigger>
+          <app-tabs-trigger value="submissions" [isActive]="activeTab === 'submissions'" (tabClick)="onTabChange($event)">Submissions</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="regulations" [isActive]="activeTab === 'regulations'" className="regulations-tab-content">
+          <div class="regulations-header">
+            <h3 class="regulations-title">Regulatory Framework Compliance</h3>
+            <app-button (onClick)="onAddRegulation()">Add Regulation</app-button>
+          </div>
+
+          <div class="regulations-grid">
+            <app-card *ngFor="let regulation of regulations; trackBy: trackByRegulationId">
+              <app-card-header>
+                <div class="regulation-header">
+                  <div class="regulation-info">
+                    <div class="regulation-icon">📄</div>
+                    <div class="regulation-details">
+                      <app-card-title className="regulation-title">{{ regulation.name }}</app-card-title>
+                      <app-card-description>{{ regulation.description }}</app-card-description>
+                    </div>
+                  </div>
+                  <app-badge [variant]="getStatusBadgeVariant(regulation.status)">
+                    {{ regulation.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="regulation-content">
+                  <div class="regulation-details-grid">
+                    <div class="detail-item">
+                      <p class="detail-label">Last Review</p>
+                      <p class="detail-value">{{ regulation.lastReview }}</p>
+                    </div>
+                    <div class="detail-item">
+                      <p class="detail-label">Next Review</p>
+                      <p class="detail-value">{{ regulation.nextReview }}</p>
+                    </div>
+                    <div class="detail-item">
+                      <p class="detail-label">Compliance Score</p>
+                      <p class="detail-value">{{ regulation.compliance }}%</p>
+                    </div>
+                  </div>
+                  <div class="compliance-progress">
+                    <div class="progress-header">
+                      <span class="progress-label">Compliance Progress</span>
+                      <span class="progress-value">{{ regulation.compliance }}%</span>
+                    </div>
+                    <app-progress [value]="regulation.compliance" className="compliance-progress-bar"></app-progress>
+                  </div>
+                  <div class="regulation-actions">
+                    <app-button variant="outline" size="sm" (onClick)="onViewDetails(regulation)" className="action-button">
+                      View Details
+                    </app-button>
+                    <app-button variant="outline" size="sm" (onClick)="onGenerateReport(regulation)" className="action-button">
+                      Generate Report
+                    </app-button>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="requirements" [isActive]="activeTab === 'requirements'" className="requirements-tab-content">
+          <div class="requirements-grid">
+            <app-card *ngFor="let requirement of requirements; trackBy: trackByRequirementCategory">
+              <app-card-header>
+                <app-card-title className="requirement-title">{{ requirement.category }}</app-card-title>
+                <app-card-description>
+                  {{ requirement.completed }} of {{ requirement.total }} requirements completed
+                </app-card-description>
+              </app-card-header>
+              <app-card-content>
+                <div class="requirement-content">
+                  <div class="requirement-progress">
+                    <div class="progress-header">
+                      <span class="progress-value">{{ requirement.percentage }}%</span>
+                      <span [class]="'status-icon ' + getStatusIconClass(requirement.percentage)">
+                        {{ getStatusIcon(requirement.percentage) }}
+                      </span>
+                    </div>
+                    <app-progress [value]="requirement.percentage" className="requirement-progress-bar"></app-progress>
+                    <p class="requirement-remaining">
+                      {{ requirement.total - requirement.completed }} requirements remaining
+                    </p>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="submissions" [isActive]="activeTab === 'submissions'" className="submissions-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Regulatory Submissions</app-card-title>
+              <app-card-description>Track submissions to regulatory authorities</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="submissions-placeholder">
+                <div class="placeholder-icon">📄</div>
+                <p class="placeholder-text">No submissions to display</p>
+                <app-button (onClick)="onCreateSubmission()" className="placeholder-button">
+                  Create Submission
+                </app-button>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

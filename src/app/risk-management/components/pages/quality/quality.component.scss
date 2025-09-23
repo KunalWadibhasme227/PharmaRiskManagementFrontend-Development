@@ -1,0 +1,46 @@
+.quality-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background);
+}
+
+.quality-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.quality-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.quality-overview {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600; /* font-semibold */
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+.quality-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* Responsive design */
+@media (min-width: 1024px) {
+  .quality-content-grid {
+    grid-template-columns: 1fr;
+  }
+}

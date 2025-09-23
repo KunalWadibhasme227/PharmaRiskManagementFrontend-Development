@@ -1,0 +1,26 @@
+<app-card [className]="getVariantStyles()">
+  <app-card-header className="metric-header">
+    <app-card-title [className]="getTitleColor()">{{ title }}</app-card-title>
+    <ng-container *ngIf="icon">
+      <ng-container [ngSwitch]="icon.name">
+        <!-- We'll handle icon rendering here -->
+        <div [class]="getIconColor()">
+          <ng-container [ngTemplateOutlet]="icon.template"></ng-container>
+        </div>
+      </ng-container>
+    </ng-container>
+  </app-card-header>
+  <app-card-content>
+    <div [class]="getValueColor()">{{ value }}</div>
+    <div class="metric-footer">
+      <div *ngIf="change" class="metric-change">
+        <span [class]="getChangeColor()">{{ change.value }}</span>
+        <span [class]="getDescriptionColor()">from last month</span>
+      </div>
+      <div *ngIf="description && !change" [class]="getDescriptionColor()">{{ description }}</div>
+    </div>
+    <div *ngIf="description && change" [class]="getDescriptionColor()" class="metric-description-bottom">
+      {{ description }}
+    </div>
+  </app-card-content>
+</app-card>

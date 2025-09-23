@@ -1,0 +1,151 @@
+<div class="manufacturing-page">
+  <div class="manufacturing-content">
+    <app-dashboard-header
+      title="Manufacturing Audit"
+      subtitle="Monitor manufacturing processes and quality controls">
+    </app-dashboard-header>
+
+    <main class="manufacturing-main">
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="manufacturing-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="audits" [isActive]="activeTab === 'audits'" (tabClick)="onTabChange($event)">Manufacturing Audits</app-tabs-trigger>
+          <app-tabs-trigger value="processes" [isActive]="activeTab === 'processes'" (tabClick)="onTabChange($event)">Process Metrics</app-tabs-trigger>
+          <app-tabs-trigger value="equipment" [isActive]="activeTab === 'equipment'" (tabClick)="onTabChange($event)">Equipment Status</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="audits" [isActive]="activeTab === 'audits'" className="audits-tab-content">
+          <div class="audits-header">
+            <div class="audits-controls">
+              <div class="search-container">
+                <div class="search-icon">🔍</div>
+                <app-input placeholder="Search audits..." className="search-input"></app-input>
+              </div>
+              <app-button variant="outline" size="sm" className="filter-button">
+                <span class="filter-icon">🔽</span>
+                Filter
+              </app-button>
+            </div>
+            <app-button (onClick)="onScheduleNewAudit()">Schedule New Audit</app-button>
+          </div>
+
+          <div class="audits-grid">
+            <app-card *ngFor="let audit of manufacturingAudits; trackBy: trackByAuditId">
+              <app-card-header>
+                <div class="audit-header">
+                  <div class="audit-info">
+                    <div class="audit-icon">🏭</div>
+                    <div class="audit-details">
+                      <app-card-title className="audit-title">{{ audit.facility }}</app-card-title>
+                      <app-card-description>{{ audit.location }}</app-card-description>
+                    </div>
+                  </div>
+                  <app-badge [variant]="getStatusBadgeVariant(audit.status)">
+                    {{ audit.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="audit-details-grid">
+                  <div class="detail-item">
+                    <p class="detail-label">Audit Type</p>
+                    <p class="detail-value">{{ audit.auditType }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Date</p>
+                    <p class="detail-value">{{ audit.date }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Auditor</p>
+                    <p class="detail-value">{{ audit.auditor }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Score</p>
+                    <p class="detail-value">{{ getScoreDisplay(audit.score) }}</p>
+                  </div>
+                </div>
+                <div class="audit-footer">
+                  <div class="audit-findings">
+                    <span class="findings-icon">⚠️</span>
+                    <span class="findings-text">{{ audit.findings }} findings</span>
+                  </div>
+                  <div class="audit-actions">
+                    <app-button variant="outline" size="sm" (onClick)="onViewDetails(audit)" className="action-button">
+                      View Details
+                    </app-button>
+                    <app-button variant="outline" size="sm" (onClick)="onViewReport(audit)" className="action-button">
+                      View Report
+                    </app-button>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="processes" [isActive]="activeTab === 'processes'" className="processes-tab-content">
+          <div class="processes-grid">
+            <app-card>
+              <app-card-header>
+                <app-card-title className="process-title">Production Efficiency</app-card-title>
+              </app-card-header>
+              <app-card-content>
+                <div class="process-metrics">
+                  <div class="metric-header">
+                    <span class="metric-value">94%</span>
+                    <app-badge variant="secondary">Target: 95%</app-badge>
+                  </div>
+                  <div class="metric-status">
+                    <span class="status-icon">⏰</span>
+                    <span class="status-text">Below target</span>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+            <app-card>
+              <app-card-header>
+                <app-card-title className="process-title">Quality Control Pass Rate</app-card-title>
+              </app-card-header>
+              <app-card-content>
+                <div class="process-metrics">
+                  <div class="metric-header">
+                    <span class="metric-value">98.5%</span>
+                    <app-badge variant="default">Target: 98%</app-badge>
+                  </div>
+                  <div class="metric-status">
+                    <span class="status-icon">✅</span>
+                    <span class="status-text">Meeting target</span>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="equipment" [isActive]="activeTab === 'equipment'" className="equipment-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Equipment Status Overview</app-card-title>
+              <app-card-description>Real-time monitoring of manufacturing equipment</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="equipment-stats">
+                <div class="stat-card operational">
+                  <div class="stat-value">24</div>
+                  <div class="stat-label">Operational</div>
+                </div>
+                <div class="stat-card maintenance">
+                  <div class="stat-value">3</div>
+                  <div class="stat-label">Maintenance</div>
+                </div>
+                <div class="stat-card offline">
+                  <div class="stat-value">1</div>
+                  <div class="stat-label">Offline</div>
+                </div>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+.findings-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.stat-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+
+.stat-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.stat-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon-success {
+  color: var(--primary);
+}
+
+.stat-icon-warning {
+  color: var(--accent);
+}
+
+.stat-icon-danger {
+  color: var(--destructive);
+}
+
+.stat-icon-default {
+  color: var(--muted-foreground);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.stat-description {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.stat-card-success {
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.stat-card-warning {
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.stat-card-danger {
+  border: 1px solid color-mix(in srgb, var(--destructive) 30%, transparent);
+  background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+}
+
+.stat-card-default {
+  border: 1px solid var(--border);
+  background-color: var(--background);
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .findings-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .findings-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

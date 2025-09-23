@@ -1,0 +1,30 @@
+<div class="ai-analytics-page">
+  <div class="ai-analytics-content">
+    <app-dashboard-header
+      title="AI Analytics"
+      subtitle="Generate intelligent insights and predictions for supplier risk management">
+    </app-dashboard-header>
+
+    <main class="ai-analytics-main">
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="ai-analytics-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="insights" [isActive]="activeTab === 'insights'" (tabClick)="onTabChange($event)">AI Insights</app-tabs-trigger>
+          <app-tabs-trigger value="predictive" [isActive]="activeTab === 'predictive'" (tabClick)="onTabChange($event)">Predictive Analytics</app-tabs-trigger>
+          <app-tabs-trigger value="recommendations" [isActive]="activeTab === 'recommendations'" (tabClick)="onTabChange($event)">AI Recommendations</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="insights" [isActive]="activeTab === 'insights'" className="insights-tab-content">
+          <app-ai-insights></app-ai-insights>
+        </app-tabs-content>
+
+        <app-tabs-content value="predictive" [isActive]="activeTab === 'predictive'" className="predictive-tab-content">
+          <app-predictive-analytics></app-predictive-analytics>
+        </app-tabs-content>
+
+        <app-tabs-content value="recommendations" [isActive]="activeTab === 'recommendations'" className="recommendations-tab-content">
+          <app-ai-recommendations></app-ai-recommendations>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

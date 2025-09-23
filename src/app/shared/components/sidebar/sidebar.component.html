@@ -1,0 +1,55 @@
+<div 
+  class="sidebar"
+  [class.collapsed]="collapsed">
+  
+  <!-- Header -->
+  <div class="sidebar-header">
+    <div *ngIf="!collapsed" class="sidebar-brand">
+      <div class="brand-icon">
+        <app-bar-chart-3-icon class="icon"></app-bar-chart-3-icon>
+      </div>
+      <div class="brand-text">
+        <h1 class="brand-title">Pharma Risk</h1>
+        <p class="brand-subtitle">Management</p>
+      </div>
+    </div>
+    <button 
+      class="collapse-button"
+      (click)="toggleCollapsed()">
+      <app-chevron-right-icon *ngIf="collapsed" class="icon"></app-chevron-right-icon>
+      <app-chevron-left-icon *ngIf="!collapsed" class="icon"></app-chevron-left-icon>
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <div class="sidebar-content">
+    <nav class="sidebar-nav">
+      <button
+        *ngFor="let module of modules"
+        class="nav-button"
+        [class.active]="isActive(module.id)"
+        [class.collapsed]="collapsed"
+        (click)="handleModuleClick(module.id, module.path)">
+        <ng-container [ngSwitch]="module.id">
+          <app-home-icon *ngSwitchCase="'overview'" class="nav-icon"></app-home-icon>
+          <app-navigation-icon *ngSwitchCase="'navigation'" class="nav-icon"></app-navigation-icon>
+          <app-file-text-icon *ngSwitchCase="'fda-forms'" class="nav-icon"></app-file-text-icon>
+          <app-users-icon *ngSwitchCase="'suppliers'" class="nav-icon"></app-users-icon>
+          <app-calendar-icon *ngSwitchCase="'audits'" class="nav-icon"></app-calendar-icon>
+          <app-alert-triangle-icon *ngSwitchCase="'findings'" class="nav-icon"></app-alert-triangle-icon>
+          <app-shield-icon *ngSwitchCase="'compliance'" class="nav-icon"></app-shield-icon>
+          <app-settings-icon *ngSwitchCase="'quality'" class="nav-icon"></app-settings-icon>
+          <app-file-check-icon *ngSwitchCase="'documents'" class="nav-icon"></app-file-check-icon>
+          <app-building-icon *ngSwitchCase="'facilities'" class="nav-icon"></app-building-icon>
+          <app-truck-icon *ngSwitchCase="'logistics'" class="nav-icon"></app-truck-icon>
+          <app-scale-icon *ngSwitchCase="'regulatory'" class="nav-icon"></app-scale-icon>
+          <app-package-icon *ngSwitchCase="'materials'" class="nav-icon"></app-package-icon>
+          <app-factory-icon *ngSwitchCase="'manufacturing'" class="nav-icon"></app-factory-icon>
+          <app-trending-up-icon *ngSwitchCase="'risk'" class="nav-icon"></app-trending-up-icon>
+          <app-brain-icon *ngSwitchCase="'ai-analytics'" class="nav-icon"></app-brain-icon>
+        </ng-container>
+        <span *ngIf="!collapsed" class="nav-text">{{ module.name }}</span>
+      </button>
+    </nav>
+  </div>
+</div>

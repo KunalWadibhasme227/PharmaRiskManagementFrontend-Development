@@ -1,0 +1,55 @@
+<div class="audits-page">
+  <div class="audits-content">
+    <app-dashboard-header
+      title="Audit Schedule"
+      subtitle="Module to schedule and manage supplier audits and inspections">
+    </app-dashboard-header>
+
+    <main class="audits-main">
+      <!-- Main Content Tabs -->
+      <app-tabs [defaultValue]="activeTab" className="main-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger
+            value="upcoming"
+            [isActive]="activeTab === 'upcoming'"
+            (click)="onTabChange('upcoming')">
+            Upcoming Audits
+          </app-tabs-trigger>
+          <app-tabs-trigger
+            value="completed"
+            [isActive]="activeTab === 'completed'"
+            (click)="onTabChange('completed')">
+            Completed Audits
+          </app-tabs-trigger>
+          <app-tabs-trigger
+            value="calendar"
+            [isActive]="activeTab === 'calendar'"
+            (click)="onTabChange('calendar')">
+            Calendar View
+          </app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content
+          value="upcoming"
+          [isActive]="activeTab === 'upcoming'"
+          className="tabs-content-space">
+          <app-upcoming-audits-list></app-upcoming-audits-list>
+        </app-tabs-content>
+
+        <app-tabs-content
+          value="completed"
+          [isActive]="activeTab === 'completed'"
+          className="tabs-content-space">
+          <app-completed-audits-list></app-completed-audits-list>
+        </app-tabs-content>
+
+        <app-tabs-content
+          value="calendar"
+          [isActive]="activeTab === 'calendar'"
+          className="tabs-content-space">
+          <app-audit-calendar></app-audit-calendar>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

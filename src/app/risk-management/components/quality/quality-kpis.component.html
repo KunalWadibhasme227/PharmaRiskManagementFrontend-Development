@@ -1,0 +1,32 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Key Performance Indicators</app-card-title>
+  </app-card-header>
+  <app-card-content className="kpis-content">
+    <div
+      *ngFor="let kpi of kpis; trackBy: trackByKpiName"
+      class="kpi-item">
+      <div class="kpi-header">
+        <div class="kpi-details">
+          <h4 class="kpi-name">{{ kpi.name }}</h4>
+          <p class="kpi-target">Target: {{ kpi.target }}{{ kpi.unit }}</p>
+        </div>
+        <div class="kpi-score-section">
+          <span class="kpi-current">{{ kpi.current }}{{ kpi.unit }}</span>
+          <app-badge [variant]="getStatusBadgeVariant(kpi.status)">
+            {{ getStatusBadgeText(kpi.status) }}
+          </app-badge>
+        </div>
+      </div>
+      <div class="kpi-progress">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill"
+            [class]="getProgressColor(kpi.status)"
+            [style.width.%]="getProgressValue(kpi)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card-content>
+</app-card>

@@ -1,0 +1,35 @@
+<div class="compliance-page">
+  <div class="compliance-content">
+    <app-dashboard-header
+      title="Compliance Dashboard"
+      subtitle="Main module to monitor regulatory compliance and certification status">
+    </app-dashboard-header>
+
+    <main class="compliance-main">
+      <!-- Header Actions -->
+      <div class="compliance-actions">
+        <app-button
+          variant="default"
+          (onClick)="onGenerateReport()"
+          className="generate-report-button">
+          <span class="button-content">
+            <span class="button-icon">📄</span>
+            <span>Generate Report</span>
+          </span>
+        </app-button>
+      </div>
+
+      <!-- Compliance Overview -->
+      <section class="compliance-overview">
+        <h2 class="section-title">Compliance Overview</h2>
+        <app-compliance-overview-cards></app-compliance-overview-cards>
+      </section>
+
+      <!-- Main Content Grid -->
+      <div class="compliance-grid">
+        <app-compliance-metrics></app-compliance-metrics>
+        <app-certifications-licenses></app-certifications-licenses>
+      </div>
+    </main>
+  </div>
+</div>

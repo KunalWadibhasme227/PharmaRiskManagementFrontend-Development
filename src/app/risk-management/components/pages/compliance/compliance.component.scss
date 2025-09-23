@@ -1,0 +1,67 @@
+.compliance-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background);
+}
+
+.compliance-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.compliance-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.compliance-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.generate-report-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button-icon {
+  font-size: 1rem;
+}
+
+.compliance-overview {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600; /* font-semibold */
+  color: var(--foreground);
+  margin-bottom: 1rem;
+}
+
+.compliance-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* Responsive design */
+@media (min-width: 1024px) {
+  .compliance-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

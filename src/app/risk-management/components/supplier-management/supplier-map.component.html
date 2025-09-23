@@ -1,0 +1,72 @@
+<div class="supplier-map-section">
+  <!-- Map Placeholder -->
+  <app-card>
+    <app-card-header>
+      <app-card-title>Supplier Locations Map</app-card-title>
+    </app-card-header>
+    <app-card-content>
+      <div class="map-container">
+        <div class="map-placeholder">
+          <div class="map-placeholder-content">
+            <div class="map-icon">📍</div>
+            <p class="map-description">Interactive map view of supplier locations</p>
+            <p class="map-subdescription">Map integration would be implemented here</p>
+          </div>
+
+          <!-- Simulated map markers -->
+          <div class="map-markers">
+            <div
+              *ngFor="let location of supplierLocations; trackBy: trackByLocationId; let i = index"
+              class="map-marker"
+              [style.left.%]="20 + i * 15"
+              [style.top.%]="30 + i * 10">
+              <div
+                [class]="'marker-dot ' + getComplianceColor(location.compliance)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card-content>
+  </app-card>
+
+  <!-- Location Details -->
+  <div class="location-grid">
+    <app-card
+      *ngFor="let location of supplierLocations; trackBy: trackByLocationId"
+      className="location-card">
+      <app-card-header className="location-header">
+        <div class="location-title-section">
+          <div>
+            <app-card-title className="location-title">{{ location.name }}</app-card-title>
+            <p class="location-subtitle">{{ location.location }}</p>
+          </div>
+          <app-badge [variant]="getComplianceBadgeVariant(location.compliance)">
+            {{ getComplianceBadgeText(location.compliance) }}
+          </app-badge>
+        </div>
+      </app-card-header>
+      <app-card-content className="location-content">
+        <div class="location-info">
+          <div class="location-info-item">
+            <span class="info-label">Type:</span>
+            <span class="info-value">{{ location.type }}</span>
+          </div>
+          <div class="location-info-item">
+            <span class="info-label">Suppliers:</span>
+            <div class="supplier-count">
+              <span class="count-icon">👥</span>
+              <span class="count-value">{{ location.supplierCount }}</span>
+            </div>
+          </div>
+          <div
+            *ngIf="location.compliance !== 'compliant'"
+            class="location-warning">
+            <span class="warning-icon">⚠️</span>
+            <span class="warning-text">Requires attention</span>
+          </div>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+</div>

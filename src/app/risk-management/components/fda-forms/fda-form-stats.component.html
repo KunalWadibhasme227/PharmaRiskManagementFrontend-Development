@@ -1,0 +1,12 @@
+<div class="stats-grid">
+  <app-card *ngFor="let stat of stats; trackBy: trackByStatTitle">
+    <app-card-header className="stat-header">
+      <app-card-title className="stat-title">{{ stat.title }}</app-card-title>
+      <div class="stat-icon">{{ stat.icon }}</div>
+    </app-card-header>
+    <app-card-content>
+      <div class="stat-value">{{ stat.value }}</div>
+      <p class="stat-description">{{ stat.description }}</p>
+    </app-card-content>
+  </app-card>
+</div>

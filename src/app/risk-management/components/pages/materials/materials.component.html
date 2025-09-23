@@ -1,0 +1,138 @@
+<div class="materials-page">
+  <div class="materials-content">
+    <app-dashboard-header
+      title="Material Handling"
+      subtitle="Monitor material storage, tracking, and handling procedures">
+    </app-dashboard-header>
+
+    <main class="materials-main">
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="materials-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="inventory" [isActive]="activeTab === 'inventory'" (tabClick)="onTabChange($event)">Material Inventory</app-tabs-trigger>
+          <app-tabs-trigger value="storage" [isActive]="activeTab === 'storage'" (tabClick)="onTabChange($event)">Storage Conditions</app-tabs-trigger>
+          <app-tabs-trigger value="tracking" [isActive]="activeTab === 'tracking'" (tabClick)="onTabChange($event)">Batch Tracking</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="inventory" [isActive]="activeTab === 'inventory'" className="inventory-tab-content">
+          <div class="inventory-header">
+            <div class="inventory-controls">
+              <div class="search-container">
+                <div class="search-icon">🔍</div>
+                <app-input placeholder="Search materials..." className="search-input"></app-input>
+              </div>
+              <app-button variant="outline" size="sm" className="filter-button">
+                <span class="filter-icon">🔽</span>
+                Filter
+              </app-button>
+            </div>
+            <app-button (onClick)="onAddMaterial()">Add Material</app-button>
+          </div>
+
+          <div class="materials-grid">
+            <app-card *ngFor="let material of materials; trackBy: trackByMaterialId">
+              <app-card-header>
+                <div class="material-header">
+                  <div class="material-info">
+                    <div class="material-icon">📦</div>
+                    <div class="material-details">
+                      <app-card-title className="material-title">{{ material.name }}</app-card-title>
+                      <app-card-description>Batch: {{ material.batch }}</app-card-description>
+                    </div>
+                  </div>
+                  <app-badge [variant]="getStatusBadgeVariant(material.status)">
+                    {{ material.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="material-details-grid">
+                  <div class="detail-item">
+                    <p class="detail-label">Supplier</p>
+                    <p class="detail-value">{{ material.supplier }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Quantity</p>
+                    <p class="detail-value">{{ material.quantity }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Storage Temp</p>
+                    <p class="detail-value">{{ material.temperature }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Expiry</p>
+                    <p class="detail-value">{{ material.expiry }}</p>
+                  </div>
+                </div>
+                <div class="material-footer">
+                  <div class="material-location">
+                    <span class="location-icon">🛡️</span>
+                    <span class="location-text">Location: {{ material.location }}</span>
+                  </div>
+                  <div class="material-actions">
+                    <app-button variant="outline" size="sm" (onClick)="onViewDetails(material)" className="action-button">
+                      View Details
+                    </app-button>
+                    <app-button variant="outline" size="sm" (onClick)="onTrackBatch(material)" className="action-button">
+                      Track Batch
+                    </app-button>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="storage" [isActive]="activeTab === 'storage'" className="storage-tab-content">
+          <div class="storage-grid">
+            <app-card *ngFor="let condition of storageConditions; trackBy: trackByStorageZone">
+              <app-card-header>
+                <div class="storage-header">
+                  <app-card-title className="storage-zone">{{ condition.zone }}</app-card-title>
+                  <app-badge [variant]="getStorageStatusBadgeVariant(condition.status)">
+                    {{ condition.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="storage-conditions">
+                  <div class="condition-item">
+                    <div class="condition-info">
+                      <span class="condition-icon">🌡️</span>
+                      <span class="condition-label">Temperature</span>
+                    </div>
+                    <span class="condition-value">{{ condition.temperature }}</span>
+                  </div>
+                  <div class="condition-item">
+                    <div class="condition-info">
+                      <span class="condition-icon">📦</span>
+                      <span class="condition-label">Humidity</span>
+                    </div>
+                    <span class="condition-value">{{ condition.humidity }}</span>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="tracking" [isActive]="activeTab === 'tracking'" className="tracking-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Batch Tracking System</app-card-title>
+              <app-card-description>Track material batches from receipt to usage</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="tracking-placeholder">
+                <div class="placeholder-icon">📦</div>
+                <p class="placeholder-text">Batch tracking interface will be displayed here</p>
+                <app-button (onClick)="onInitializeTracking()" className="placeholder-button">
+                  Initialize Tracking
+                </app-button>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

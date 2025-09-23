@@ -1,0 +1,87 @@
+<div class="create-form-section">
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <app-button
+      variant="default"
+      (onClick)="onNewForm()"
+      className="action-button">
+      <span class="button-content">
+        <span class="button-icon">+</span>
+        <span>New Form</span>
+      </span>
+    </app-button>
+    <app-button
+      variant="outline"
+      (onClick)="onImportForm()"
+      className="action-button action-button-outline">
+      <span class="button-content">
+        <span class="button-icon">📤</span>
+        <span>Import Form</span>
+      </span>
+    </app-button>
+    <app-button
+      variant="outline"
+      (onClick)="onExportPDF()"
+      className="action-button action-button-outline">
+      <span class="button-content">
+        <span class="button-icon">📥</span>
+        <span>Export PDF</span>
+      </span>
+    </app-button>
+  </div>
+
+  <!-- Available Forms -->
+  <app-card>
+    <app-card-header>
+      <app-card-title>Available FDA Forms</app-card-title>
+    </app-card-header>
+    <app-card-content>
+      <div class="forms-grid">
+        <div
+          *ngFor="let form of availableForms; trackBy: trackByFormId"
+          class="form-card">
+          <div class="form-card-header">
+            <div class="form-details">
+              <h4 class="form-name">{{ form.name }}</h4>
+              <p class="form-description">{{ form.description }}</p>
+              <div class="form-badges">
+                <app-badge variant="outline" className="form-badge">
+                  {{ form.formNumber }}
+                </app-badge>
+                <app-badge variant="secondary" className="form-badge">
+                  {{ form.category }}
+                </app-badge>
+                <app-badge
+                  [variant]="getComplexityBadgeVariant(form.complexity)"
+                  className="form-badge">
+                  {{ getComplexityBadgeText(form.complexity) }}
+                </app-badge>
+              </div>
+            </div>
+            <div class="form-icon">📄</div>
+          </div>
+
+          <div class="form-time">
+            <p>Estimated time: {{ form.estimatedTime }}</p>
+          </div>
+
+          <div class="form-actions">
+            <app-button
+              size="sm"
+              (onClick)="onCreateForm(form)"
+              className="form-action-button form-action-primary">
+              Create Form
+            </app-button>
+            <app-button
+              variant="outline"
+              size="sm"
+              (onClick)="onPreviewForm(form)"
+              className="form-action-button">
+              Preview
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </app-card-content>
+  </app-card>
+</div>

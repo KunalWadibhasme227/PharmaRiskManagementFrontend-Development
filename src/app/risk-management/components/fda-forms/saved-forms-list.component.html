@@ -1,0 +1,68 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Saved Forms</app-card-title>
+  </app-card-header>
+  <app-card-content>
+    <app-scroll-area className="h-96">
+      <div class="saved-forms-list">
+        <div
+          *ngFor="let form of savedForms; trackBy: trackByFormId"
+          [class]="'saved-form-card ' + getStatusBorderColor(form.status)">
+          <div class="saved-form-header">
+            <div class="saved-form-details">
+              <h4 class="saved-form-name">{{ form.name }}</h4>
+              <p class="saved-form-type">{{ form.type }}</p>
+              <p class="saved-form-modified">
+                Last modified: {{ getFormattedDate(form.lastModified) }}
+              </p>
+              <p
+                *ngIf="form.submittedDate"
+                class="saved-form-submitted">
+                Submitted: {{ getFormattedDate(form.submittedDate) }}
+              </p>
+            </div>
+            <div class="saved-form-status">
+              <app-badge [variant]="getStatusBadgeVariant(form.status)">
+                {{ getStatusBadgeText(form.status) }}
+              </app-badge>
+            </div>
+          </div>
+
+          <div class="saved-form-actions">
+            <app-button
+              variant="outline"
+              size="sm"
+              (onClick)="onViewForm(form)"
+              className="saved-form-action">
+              <span class="saved-form-action-content">
+                <span class="saved-form-action-icon">👁️</span>
+                <span>View</span>
+              </span>
+            </app-button>
+            <app-button
+              *ngIf="form.status !== 'completed'"
+              variant="outline"
+              size="sm"
+              (onClick)="onEditForm(form)"
+              className="saved-form-action">
+              <span class="saved-form-action-content">
+                <span class="saved-form-action-icon">✏️</span>
+                <span>Edit</span>
+              </span>
+            </app-button>
+            <app-button
+              variant="outline"
+              size="sm"
+              (onClick)="onDownloadForm(form)"
+              className="saved-form-action">
+              <span class="saved-form-action-content">
+                <span class="saved-form-action-icon">📥</span>
+                <span>Download</span>
+              </span>
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </app-scroll-area>
+  </app-card-content>
+</app-card>

@@ -1,0 +1,68 @@
+<div class="completed-audits-section">
+  <app-card>
+    <app-card-header>
+      <app-card-title>Completed Audits ({{ completedAudits.length }})</app-card-title>
+    </app-card-header>
+    <app-card-content>
+      <app-scroll-area className="h-96">
+        <div class="audits-list">
+          <div
+            *ngFor="let audit of completedAudits; trackBy: trackByAuditId"
+            class="audit-card">
+            <div class="audit-card-header">
+              <div class="audit-details">
+                <div class="audit-title-row">
+                  <h4 class="audit-supplier">{{ audit.supplier }}</h4>
+                  <app-badge [variant]="getResultBadgeVariant(audit.result)">
+                    {{ getResultBadgeText(audit.result) }}
+                  </app-badge>
+                </div>
+                <p class="audit-type">{{ audit.auditType }}</p>
+              </div>
+              <div class="audit-score-section">
+                <div class="score-display">
+                  <div class="score-icon">🏆</div>
+                  <span [class]="'score-value ' + getScoreColor(audit.auditScore)">
+                    {{ audit.auditScore }}%
+                  </span>
+                </div>
+                <p class="score-label">Audit Score</p>
+              </div>
+            </div>
+
+            <div class="audit-info-grid">
+              <div class="audit-info-item">
+                <div class="info-icon">📅</div>
+                <span class="info-text">{{ getFormattedDate(audit.date) }}</span>
+              </div>
+              <div class="audit-info-item">
+                <div class="info-icon">👤</div>
+                <span class="info-text">{{ audit.auditor }}</span>
+              </div>
+              <div class="audit-info-item">
+                <div class="info-icon">📍</div>
+                <span class="info-text">{{ audit.location }}</span>
+              </div>
+            </div>
+
+            <div class="audit-footer">
+              <div class="findings-info">
+                {{ audit.findings }} finding{{ audit.findings !== 1 ? 's' : '' }} identified
+              </div>
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onViewReport(audit)"
+                className="view-report-button">
+                <span class="button-content">
+                  <span class="button-icon">📄</span>
+                  <span>View Report</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </app-scroll-area>
+    </app-card-content>
+  </app-card>
+</div>

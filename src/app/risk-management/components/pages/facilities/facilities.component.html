@@ -1,0 +1,133 @@
+<div class="facilities-page">
+  <div class="facilities-content">
+    <app-dashboard-header
+      title="Facilities & Equipment"
+      subtitle="Monitor facility conditions and equipment performance">
+    </app-dashboard-header>
+
+    <main class="facilities-main">
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="facilities-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="facilities" [isActive]="activeTab === 'facilities'" (tabClick)="onTabChange($event)">Facilities</app-tabs-trigger>
+          <app-tabs-trigger value="equipment" [isActive]="activeTab === 'equipment'" (tabClick)="onTabChange($event)">Equipment</app-tabs-trigger>
+          <app-tabs-trigger value="maintenance" [isActive]="activeTab === 'maintenance'" (tabClick)="onTabChange($event)">Maintenance</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="facilities" [isActive]="activeTab === 'facilities'" className="facilities-tab-content">
+          <div class="facilities-header">
+            <h3 class="facilities-title">Facility Monitoring</h3>
+            <app-button (onClick)="onAddFacility()">Add Facility</app-button>
+          </div>
+
+          <div class="facilities-grid">
+            <app-card *ngFor="let facility of facilities; trackBy: trackByFacilityId">
+              <app-card-header>
+                <div class="facility-header">
+                  <div class="facility-info">
+                    <div class="facility-icon">🏢</div>
+                    <div class="facility-details">
+                      <app-card-title className="facility-name">{{ facility.name }}</app-card-title>
+                      <app-card-description>{{ facility.location }}</app-card-description>
+                    </div>
+                  </div>
+                  <app-badge [variant]="getStatusBadgeVariant(facility.status)">
+                    {{ facility.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="facility-metrics">
+                  <div class="metric-item">
+                    <p class="metric-label">Temperature</p>
+                    <div class="metric-value">
+                      <span class="metric-icon">🌡️</span>
+                      <span class="metric-text">{{ facility.temperature }}</span>
+                    </div>
+                  </div>
+                  <div class="metric-item">
+                    <p class="metric-label">Humidity</p>
+                    <p class="metric-text">{{ facility.humidity }}</p>
+                  </div>
+                  <div class="metric-item">
+                    <p class="metric-label">Air Quality</p>
+                    <p class="metric-text">{{ facility.airQuality }}</p>
+                  </div>
+                  <div class="metric-item">
+                    <p class="metric-label">Next Inspection</p>
+                    <p class="metric-text">{{ facility.nextInspection }}</p>
+                  </div>
+                </div>
+                <div class="facility-actions">
+                  <app-button
+                    variant="outline"
+                    size="sm"
+                    (onClick)="onViewDetails(facility)"
+                    className="facility-action">
+                    View Details
+                  </app-button>
+                  <app-button
+                    variant="outline"
+                    size="sm"
+                    (onClick)="onScheduleInspection(facility)"
+                    className="facility-action">
+                    Schedule Inspection
+                  </app-button>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="equipment" [isActive]="activeTab === 'equipment'" className="equipment-tab-content">
+          <div class="equipment-grid">
+            <app-card *ngFor="let item of equipment; trackBy: trackByEquipmentName">
+              <app-card-header>
+                <div class="equipment-header">
+                  <app-card-title className="equipment-name">{{ item.name }}</app-card-title>
+                  <app-badge [variant]="getStatusBadgeVariant(item.status)">{{ item.status }}</app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="equipment-details">
+                  <div class="efficiency-section">
+                    <div class="efficiency-header">
+                      <span class="efficiency-label">Efficiency</span>
+                      <span class="efficiency-value">{{ item.efficiency }}%</span>
+                    </div>
+                    <app-progress [value]="item.efficiency" className="efficiency-progress"></app-progress>
+                  </div>
+                  <div class="maintenance-info">
+                    <span class="maintenance-label">Last Maintenance</span>
+                    <span class="maintenance-value">{{ item.lastMaintenance }}</span>
+                  </div>
+                  <div class="status-info">
+                    <span class="status-icon">{{ getEquipmentStatusIcon(item.status) }}</span>
+                    <span class="status-text">{{ getEquipmentStatusText(item.status) }}</span>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="maintenance" [isActive]="activeTab === 'maintenance'" className="maintenance-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Maintenance Schedule</app-card-title>
+              <app-card-description>Planned and preventive maintenance activities</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="maintenance-placeholder">
+                <div class="maintenance-icon">🔧</div>
+                <p class="maintenance-text">Maintenance schedule will be displayed here</p>
+                <app-button (onClick)="onScheduleMaintenance()" className="maintenance-button">
+                  Schedule Maintenance
+                </app-button>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

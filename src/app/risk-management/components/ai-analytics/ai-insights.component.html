@@ -1,0 +1,44 @@
+<div class="ai-insights-container">
+  <div class="insights-header">
+    <div class="insights-title-section">
+      <h3 class="insights-title">AI Insights</h3>
+      <p class="insights-subtitle">Real-time intelligent analysis of supplier data</p>
+    </div>
+    <app-badge variant="outline" className="ai-powered-badge">
+      <span class="brain-icon">🧠</span>
+      AI Powered
+    </app-badge>
+  </div>
+
+  <div class="insights-grid">
+    <app-card
+      *ngFor="let insight of insights; trackBy: trackByInsightId"
+      className="insight-card">
+      <app-card-header className="insight-card-header">
+        <div class="insight-header">
+          <div class="insight-info">
+            <div [class]="'severity-icon ' + getSeverityIconClass(insight.severity)">
+              <span class="icon-emoji">{{ insight.icon }}</span>
+            </div>
+            <div class="insight-details">
+              <app-card-title className="insight-title">{{ insight.title }}</app-card-title>
+              <app-card-description className="insight-meta">
+                Supplier: {{ insight.supplier }} • Confidence: {{ insight.confidence }}%
+              </app-card-description>
+            </div>
+          </div>
+          <app-badge [variant]="getSeverityBadgeVariant(insight.severity)">
+            {{ getSeverityBadgeText(insight.severity) }}
+          </app-badge>
+        </div>
+      </app-card-header>
+      <app-card-content className="insight-content">
+        <p class="insight-description">{{ insight.description }}</p>
+        <app-button size="sm" className="action-button" (onClick)="onTakeAction(insight)">
+          <span class="action-icon">⚡</span>
+          {{ insight.action }}
+        </app-button>
+      </app-card-content>
+    </app-card>
+  </div>
+</div>

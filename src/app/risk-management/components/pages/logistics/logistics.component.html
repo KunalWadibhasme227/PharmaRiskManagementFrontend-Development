@@ -1,0 +1,149 @@
+<div class="logistics-page">
+  <div class="logistics-content">
+    <app-dashboard-header
+      title="Supply Chain Logistics"
+      subtitle="Track shipments and monitor transport conditions">
+    </app-dashboard-header>
+
+    <main class="logistics-main">
+      <!-- Metrics Cards Section -->
+      <div class="logistics-metrics-grid">
+        <app-card
+          *ngFor="let metric of metrics; trackBy: trackByMetricTitle"
+          [className]="getVariantStyles(metric.variant)">
+          <app-card-header className="metric-header">
+            <app-card-title [className]="getTitleColor()">{{ metric.title }}</app-card-title>
+            <div [class]="getIconColor(metric.variant)">{{ metric.icon }}</div>
+          </app-card-header>
+          <app-card-content>
+            <div [class]="getValueColor(metric.variant)">{{ metric.value }}</div>
+            <p [class]="getDescriptionColor()">{{ metric.change }}</p>
+          </app-card-content>
+        </app-card>
+      </div>
+
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="logistics-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="shipments" [isActive]="activeTab === 'shipments'" (tabClick)="onTabChange($event)">Active Shipments</app-tabs-trigger>
+          <app-tabs-trigger value="conditions" [isActive]="activeTab === 'conditions'" (tabClick)="onTabChange($event)">Transport Conditions</app-tabs-trigger>
+          <app-tabs-trigger value="carriers" [isActive]="activeTab === 'carriers'" (tabClick)="onTabChange($event)">Carrier Performance</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="shipments" [isActive]="activeTab === 'shipments'" className="shipments-tab-content">
+          <div class="shipments-header">
+            <div class="shipments-controls">
+              <div class="search-container">
+                <div class="search-icon">🔍</div>
+                <app-input placeholder="Search shipments..." className="search-input"></app-input>
+              </div>
+              <app-button variant="outline" size="sm" className="filter-button">
+                <span class="filter-icon">🔽</span>
+                Filter
+              </app-button>
+            </div>
+            <app-button (onClick)="onTrackNewShipment()">Track New Shipment</app-button>
+          </div>
+
+          <div class="shipments-grid">
+            <app-card *ngFor="let shipment of shipments; trackBy: trackByShipmentId">
+              <app-card-header>
+                <div class="shipment-header">
+                  <div class="shipment-info">
+                    <div class="shipment-icon">🚛</div>
+                    <div class="shipment-details">
+                      <app-card-title className="shipment-title">Shipment {{ shipment.id }}</app-card-title>
+                      <app-card-description>{{ shipment.supplier }}</app-card-description>
+                    </div>
+                  </div>
+                  <app-badge [variant]="getStatusBadgeVariant(shipment.status)">
+                    {{ shipment.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="shipment-details-grid">
+                  <div class="detail-item">
+                    <p class="detail-label">Origin</p>
+                    <p class="detail-value">{{ shipment.origin }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Destination</p>
+                    <p class="detail-value">{{ shipment.destination }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">Carrier</p>
+                    <p class="detail-value">{{ shipment.carrier }}</p>
+                  </div>
+                  <div class="detail-item">
+                    <p class="detail-label">ETA</p>
+                    <p class="detail-value">{{ shipment.estimatedArrival }}</p>
+                  </div>
+                </div>
+                <div class="shipment-footer">
+                  <div class="shipment-conditions">
+                    <div class="condition-item">
+                      <span class="condition-icon">🌡️</span>
+                      <span class="condition-text">{{ shipment.temperature }}</span>
+                    </div>
+                    <div class="condition-item">
+                      <span class="condition-icon">📦</span>
+                      <span class="condition-text">{{ shipment.humidity }}</span>
+                    </div>
+                  </div>
+                  <div class="shipment-actions">
+                    <app-button variant="outline" size="sm" (onClick)="onTrackShipment(shipment)" className="action-button">
+                      <span class="action-icon">📍</span>
+                      Track
+                    </app-button>
+                    <app-button variant="outline" size="sm" (onClick)="onViewDetails(shipment)" className="action-button">
+                      View Details
+                    </app-button>
+                  </div>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="conditions" [isActive]="activeTab === 'conditions'" className="conditions-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Real-time Transport Conditions</app-card-title>
+              <app-card-description>Monitor environmental conditions during transport</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="conditions-grid">
+                <div class="condition-card">
+                  <div class="condition-value temperature">4.2°C</div>
+                  <div class="condition-label">Temperature (2-8°C)</div>
+                </div>
+                <div class="condition-card">
+                  <div class="condition-value humidity">43%</div>
+                  <div class="condition-label">Humidity (40-60%)</div>
+                </div>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+
+        <app-tabs-content value="carriers" [isActive]="activeTab === 'carriers'" className="carriers-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Carrier Performance Metrics</app-card-title>
+              <app-card-description>Evaluate logistics partner performance</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="carriers-placeholder">
+                <div class="placeholder-icon">🚛</div>
+                <p class="placeholder-text">Carrier performance data will be displayed here</p>
+                <app-button (onClick)="onGenerateReport()" className="placeholder-button">
+                  Generate Report
+                </app-button>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

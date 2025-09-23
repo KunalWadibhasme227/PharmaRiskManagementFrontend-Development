@@ -1,0 +1,211 @@
+<div class="supplier-list-section">
+  <!-- Header with Search and Filters -->
+  <div class="supplier-list-header">
+    <div class="supplier-list-filters">
+      <div class="search-container">
+        <div class="search-icon">🔍</div>
+        <app-input placeholder="Search by name or type..." [value]="searchTerm" (onInput)="onSearchChange($event)"
+          className="search-input">
+        </app-input>
+      </div>
+      
+      <button 
+        class="btn btn-outline-secondary toggle-offcanvas-btn" 
+        type="button"
+        data-bs-toggle="offcanvas" 
+        data-bs-target="#offcanvasRight" 
+        aria-controls="offcanvasRight">
+        ⚙️ Filters
+      </button>
+      <app-button 
+    variant="outline" 
+    size="sm" 
+    (onClick)="clearFilters()" 
+    className="filter-action">
+    <span class="button-content">
+      <span>Clear Filter</span>
+    </span>
+  </app-button>
+      <!-- <div class="filter-container">
+        <app-select [value]="filterType">
+          <app-select-trigger placeholder="Filter by type" className="filter-select">
+            {{ filterType === 'all' ? 'All Types' : filterType }}
+          </app-select-trigger>
+          <app-select-content>
+            <app-select-item value="all" (click)="onFilterChange('all')">All Types</app-select-item>
+            <app-select-item value="API Manufacturer" (click)="onFilterChange('API Manufacturer')">API
+              Manufacturer</app-select-item>
+            <app-select-item value="Excipient Supplier" (click)="onFilterChange('Excipient Supplier')">Excipient
+              Supplier</app-select-item>
+            <app-select-item value="Packaging Supplier" (click)="onFilterChange('Packaging Supplier')">Packaging
+              Supplier</app-select-item>
+            <app-select-item value="Raw Material Supplier" (click)="onFilterChange('Raw Material Supplier')">Raw
+              Material Supplier</app-select-item>
+          </app-select-content>
+        </app-select>
+      </div> -->
+    </div>
+  
+    <app-button variant="default" (onClick)="onAddSupplier()" className="add-supplier-button">
+      <span class="button-content">
+        <span class="button-icon">+</span>
+        <span>Add New Supplier</span>
+      </span>
+    </app-button>
+  </div>
+
+  <!-- Supplier List -->
+  <app-card>
+    <app-card-header>
+      <app-card-title>Suppliers ({{ suppliers.length }})</app-card-title>
+    </app-card-header>
+    <app-card-content>
+      <app-scroll-area className="h-96">
+        <div class="supplier-list">
+          <div *ngFor="let supplier of suppliers; trackBy: trackBySupplierId" class="supplier-card">
+
+            <div class="supplier-card-header">
+              <div class="supplier-details">
+                <div class="supplier-title-row">
+                  <h4 class="supplier-name">{{ supplier.companyName }}</h4>
+                  <app-badge [variant]="supplier.isApproved ? 'primary' : 'destructive'">
+                    {{ supplier.isApproved ? 'Compliant' : 'Non-Compliant' }}
+                  </app-badge>
+                  <app-badge [variant]="'outline'" [className]="mapRiskClass(supplier.rating)">
+                    {{ mapRiskText(supplier.rating) }}
+                  </app-badge>
+                </div>
+                <p class="supplier-type">{{ supplier.primaryIndustry || 'Unknown' }}</p>
+              </div>
+            </div>
+
+            <div class="supplier-info-grid">
+              <div class="supplier-info-item">
+                <div class="info-icon">📍</div>
+                <span class="info-text">
+                  {{ supplier.location || (supplier.countryName + ', ' + supplier.stateName + ', ' + supplier.city) }}
+                </span>
+              </div>
+              <div class="supplier-info-item">
+                <div class="info-icon">📞</div>
+                <span class="info-text">{{ supplier.pcEmail || supplier.pcPhone }}</span>
+              </div>
+              <div class="supplier-info-item">
+                <div class="info-icon">🏆</div>
+                <span class="info-text">{{ supplier.legalStructure || '-------' }}</span>
+              </div>
+            </div>
+
+            <div class="supplier-audit-info">
+              Year Established: {{ supplier.yearEstablished ? (supplier.yearEstablished | date:'mediumDate') : '-------' }}
+            </div>
+
+            <div class="supplier-actions">
+              <app-button variant="outline" size="sm" (onClick)="onViewDetails(supplier)" className="supplier-action">
+                <span class="action-content">
+                  <span class="action-icon">👁️</span>
+                  <span>View Details</span>
+                </span>
+              </app-button>
+              <app-button variant="outline" size="sm" (onClick)="onContact(supplier)" className="supplier-action">
+                <span class="action-content">
+                  <span class="action-icon">📞</span>
+                  <span>Contact</span>
+                </span>
+              </app-button>
+              <app-button variant="outline" size="sm" (onClick)="onScheduleAudit(supplier)" className="supplier-action">
+                <span class="action-content">
+                  <span class="action-icon">📅</span>
+                  <span>Schedule Audit</span>
+                </span>
+              </app-button>
+              <app-button variant="outline" size="sm" (onClick)="onGenerateReport(supplier)"
+                className="supplier-action">
+                <span class="action-content">
+                  <span class="action-icon">📄</span>
+                  <span>Generate Report</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </app-scroll-area>
+    </app-card-content>
+  </app-card>
+  <div class="card-footer pagination-controls">
+    <app-button variant="outline" size="sm" (onClick)="prevPage()" [disabled]="!canGoPrev() || loading">
+      Previous
+    </app-button>
+
+    <span class="page-info">Page {{ pageNumber }} of {{ totalPages }}</span>
+
+    <app-button variant="outline" size="sm" (onClick)="nextPage()" [disabled]="!canGoNext() || loading">
+      Next
+    </app-button>
+  </div>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasRightLabel">Filters</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <mat-form-field appearance="outline" class="date-range-field">
+      <mat-label>Date Range</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate matInput placeholder="Start date" [(ngModel)]="fromDate">
+        <input matEndDate matInput placeholder="End date" [(ngModel)]="toDate">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100 mt-3">
+  <mat-label>Status</mat-label>
+  <mat-select [(ngModel)]="isActive">
+    <mat-option [value]="null" disabled>Select Status</mat-option>
+    <mat-option [value]="true">Active</mat-option>
+    <mat-option [value]="false">Inactive</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline" class="w-100 mt-3">
+  <mat-label>State</mat-label>
+  <mat-select [(ngModel)]="selectedState" (selectionChange)="onStateChange($event.value)">
+    <mat-option [value]="null" disabled>Select State</mat-option>
+    <mat-option *ngFor="let state of states" [value]="state.id">{{ state.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- City -->
+<mat-form-field appearance="outline" class="w-100 mt-3">
+  <mat-label>City</mat-label>
+  <mat-select [(ngModel)]="selectedCity">
+    <mat-option [value]="null" disabled>Select City</mat-option>
+    <mat-option *ngFor="let city of filteredCities" [value]="city.id">{{ city.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<div class="d-flex justify-content-center gap-2 mt-4">
+  <app-button 
+    variant="default" 
+    size="sm" 
+    (onClick)="applyFilter()" 
+    className="filter-action">
+    <span class="button-content">
+      <span>Apply Filter</span>
+    </span>
+  </app-button>
+  <app-button 
+    variant="outline" 
+    size="sm" 
+    (onClick)="clearFilters()" 
+    className="filter-action">
+    <span class="button-content">
+      <span>Clear Filter</span>
+    </span>
+  </app-button>
+</div>
+
+
+  </div>
+</div>

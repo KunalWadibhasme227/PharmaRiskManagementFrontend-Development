@@ -1,0 +1,10 @@
+<div class="app-container">
+  <app-sidebar 
+    [activeModule]="activeModule" 
+    (moduleChange)="onModuleChange($event)">
+  </app-sidebar>
+  
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

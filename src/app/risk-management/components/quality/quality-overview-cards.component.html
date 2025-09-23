@@ -1,0 +1,14 @@
+<div class="overview-cards-grid">
+  <app-card
+    *ngFor="let item of overviewData; trackBy: trackByTitle"
+    [className]="getVariantStyles(item.variant)">
+    <app-card-header className="overview-card-header">
+      <app-card-title className="overview-card-title">{{ item.title }}</app-card-title>
+      <div class="overview-card-icon">{{ item.icon }}</div>
+    </app-card-header>
+    <app-card-content>
+      <div [class]="'overview-value ' + getValueColor(item.variant)">{{ item.value }}</div>
+      <p class="overview-description">{{ item.description }}</p>
+    </app-card-content>
+  </app-card>
+</div>

@@ -1,0 +1,35 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Compliance Metrics</app-card-title>
+  </app-card-header>
+  <app-card-content className="metrics-content">
+    <div
+      *ngFor="let metric of metrics; trackBy: trackByStandard"
+      class="metric-item">
+      <div class="metric-header">
+        <div class="metric-details">
+          <h4 class="metric-standard">{{ metric.standard }}</h4>
+          <div class="metric-dates">
+            <span class="metric-date">Last review: {{ getFormattedDate(metric.lastReview) }}</span>
+            <span class="metric-date">Next review: {{ getFormattedDate(metric.nextReview) }}</span>
+          </div>
+        </div>
+        <div class="metric-score-section">
+          <span class="metric-score">{{ metric.score }}%</span>
+          <app-badge [variant]="getStatusBadgeVariant(metric.status)">
+            {{ getStatusBadgeText(metric.status) }}
+          </app-badge>
+        </div>
+      </div>
+      <div class="metric-progress">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill"
+            [class]="getProgressColor(metric.score)"
+            [style.width.%]="metric.score">
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card-content>
+</app-card>

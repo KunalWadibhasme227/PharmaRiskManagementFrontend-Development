@@ -1,0 +1,133 @@
+<div class="suppliers-page">
+  <div class="suppliers-content">
+    <app-dashboard-header
+      title="Supplier Management"
+      subtitle="Module to manage suppliers and related actions">
+    </app-dashboard-header>
+  </div>
+</div>
+
+<div class="supplier-details-shell">
+  <!-- Back and title row -->
+  <div class="details-topbar">
+    <button class="back-btn" (click)="goBack()">← Back to list</button>
+
+    <div class="title-row">
+      <div class="title-left">
+        <h1 class="company-name">{{ supplier?.companyName || 'Supplier Details' }}</h1>
+        <div class="subtitle">
+          <span class="industry">{{ supplier?.primaryIndustry || '—' }}</span>
+          <div class="badges">
+            <app-badge [variant]="getComplianceBadgeVariant(supplier?.isApproved)">
+              {{ getComplianceBadgeText(supplier?.isApproved) }}
+            </app-badge>
+            <app-badge [variant]="getRiskBadgeVariant(supplier?.rating)" [className]="mapRiskClass(supplier?.rating)">
+              {{ getRiskBadgeText(supplier?.rating) }}
+            </app-badge>
+          </div>
+        </div>
+      </div>
+
+      <div class="title-actions">
+        <app-button variant="outline" size="sm" >Contact</app-button>
+        <app-button variant="outline" size="sm" >Schedule Audit</app-button>
+        <app-button variant="default" size="sm" >Export</app-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <app-card class="details-card">
+    <app-card-content>
+      <div class="detail-grid">
+        <!-- Column 1 -->
+        <!-- <div class="field">
+          <div class="label">Company ID : </div>
+          <div class="value">{{ supplier?.companyId || '-------' }}</div>
+        </div> -->
+
+        <div class="field">
+          <div class="label">DBA : </div>
+          <div class="value">{{ supplier?.dba || '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Industry : </div>
+          <div class="value">{{ supplier?.primaryIndustry || '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Location : </div>
+          <div class="value">
+            {{ supplier?.location || (supplier?.countryName + (supplier?.stateName ? ', ' + supplier.stateName : '') + (supplier?.city ? ', ' + supplier.city : '')) || '-------' }}
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Contact Person : </div>
+          <div class="value">{{ supplier?.pcName || '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Contact Email / Phone : </div>
+          <div class="value">
+            {{ supplier?.pcEmail ? supplier.pcEmail : '—' }}
+            <span *ngIf="supplier?.pcPhone"> &nbsp; / &nbsp; {{ supplier.pcPhone }}</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Legal Structure : </div>
+          <div class="value">{{ supplier?.legalStructure || '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">No. of Locations : </div>
+          <div class="value">{{ supplier?.noOfLocations ?? 0 }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Year Established : </div>
+          <div class="value">
+            {{ supplier?.yearEstablished ? (supplier.yearEstablished | date: 'mediumDate') : '-------' }}
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Annual Revenue : </div>
+          <div class="value">{{ supplier?.annualRevenue != null ? formatNumber(supplier.annualRevenue) : '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Website : </div>
+          <div class="value">{{ supplier?.website || '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">LinkedIn : </div>
+          <div class="value">{{ supplier?.linkedIn || '-------' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Rating : </div>
+          <div class="value">{{ supplier?.rating ?? '-----' }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Risk Scores : </div>
+<span
+  class="risk-pill"
+  [ngClass]="getRiskBadgeClassFromRating(supplier?.rating)"
+  role="status"
+  aria-label="Risk level">
+  {{ getRiskBadgeTextFromRating(supplier?.rating) }}
+</span>        </div>
+
+        <div class="field full">
+          <div class="label">Business Description : </div>
+          <div class="value">{{ supplier?.businessDescription || '-------' }}</div>
+        </div>
+      </div>
+    </app-card-content>
+  </app-card>
+</div>

@@ -1,0 +1,144 @@
+<div class="documents-page">
+  <app-sidebar [activeModule]="activeModule" (moduleChange)="onModuleChange($event)"></app-sidebar>
+  
+  <div class="documents-content">
+    <app-dashboard-header
+      title="Document Management"
+      subtitle="Manage documents across categories, reviews, and workflows">
+    </app-dashboard-header>
+
+    <main class="documents-main">
+      <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="documents-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger value="documents" [isActive]="activeTab === 'documents'" (tabClick)="onTabChange($event)">All Documents</app-tabs-trigger>
+          <app-tabs-trigger value="categories" [isActive]="activeTab === 'categories'" (tabClick)="onTabChange($event)">Categories</app-tabs-trigger>
+          <app-tabs-trigger value="workflows" [isActive]="activeTab === 'workflows'" (tabClick)="onTabChange($event)">Workflows</app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content value="documents" [isActive]="activeTab === 'documents'" className="documents-tab-content">
+          <!-- Search and Filter -->
+          <div class="search-filter-section">
+            <div class="search-container">
+              <span class="search-icon">🔍</span>
+              <app-input
+                placeholder="Search documents..."
+                [value]="searchTerm"
+                (onInput)="onSearchChange($event)"
+                className="search-input">
+              </app-input>
+              <app-button variant="outline" size="sm" className="filter-button">
+                <span class="filter-icon">🔽</span>
+                Filter
+              </app-button>
+            </div>
+            <app-button (onClick)="onUploadDocument()" className="upload-button">
+              <span class="button-icon">📤</span>
+              Upload Document
+            </app-button>
+          </div>
+
+          <!-- Documents List -->
+          <div class="documents-list">
+            <app-card
+              *ngFor="let document of documents; trackBy: trackByDocumentId"
+              className="document-card">
+              <app-card-header>
+                <div class="document-header">
+                  <div class="document-info">
+                    <div class="document-icon">📄</div>
+                    <div class="document-details">
+                      <app-card-title className="document-name">{{ document.name }}</app-card-title>
+                      <app-card-description>{{ document.supplier }} • {{ document.category }}</app-card-description>
+                    </div>
+                  </div>
+                  <app-badge [variant]="getStatusBadgeVariant(document.status)">
+                    {{ document.status }}
+                  </app-badge>
+                </div>
+              </app-card-header>
+              <app-card-content>
+                <div class="document-metrics">
+                  <div class="metric-item">
+                    <p class="metric-label">Version</p>
+                    <p class="metric-value">{{ document.version }}</p>
+                  </div>
+                  <div class="metric-item">
+                    <p class="metric-label">Upload Date</p>
+                    <p class="metric-value">{{ document.uploadDate }}</p>
+                  </div>
+                  <div class="metric-item">
+                    <p class="metric-label">Expiry Date</p>
+                    <p class="metric-value">{{ document.expiryDate }}</p>
+                  </div>
+                  <div class="metric-item">
+                    <p class="metric-label">File Size</p>
+                    <p class="metric-value">{{ document.size }}</p>
+                  </div>
+                </div>
+                <div class="document-actions">
+                  <app-button variant="outline" size="sm" (onClick)="onViewDocument(document)">
+                    <span class="action-icon">👁️</span>
+                    View
+                  </app-button>
+                  <app-button variant="outline" size="sm" (onClick)="onDownloadDocument(document)">
+                    <span class="action-icon">⬇️</span>
+                    Download
+                  </app-button>
+                  <app-button variant="outline" size="sm" (onClick)="onEditDocument(document)">
+                    Edit
+                  </app-button>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="categories" [isActive]="activeTab === 'categories'" className="categories-tab-content">
+          <div class="categories-grid">
+            <app-card
+              *ngFor="let category of categories; trackBy: trackByCategoryIndex"
+              className="category-card">
+              <app-card-header>
+                <app-card-title className="category-name">{{ category.name }}</app-card-title>
+                <app-card-description>{{ category.count }} total documents</app-card-description>
+              </app-card-header>
+              <app-card-content>
+                <div class="category-metrics">
+                  <div class="metric-row">
+                    <span class="metric-label">Total Documents</span>
+                    <span class="metric-value">{{ category.count }}</span>
+                  </div>
+                  <div class="metric-row">
+                    <span class="metric-label">Pending Review</span>
+                    <app-badge variant="secondary">{{ category.pending }}</app-badge>
+                  </div>
+                  <app-button variant="outline" size="sm" className="category-button">
+                    View Category
+                  </app-button>
+                </div>
+              </app-card-content>
+            </app-card>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="workflows" [isActive]="activeTab === 'workflows'" className="workflows-tab-content">
+          <app-card>
+            <app-card-header>
+              <app-card-title>Document Workflows</app-card-title>
+              <app-card-description>Manage document approval and review workflows</app-card-description>
+            </app-card-header>
+            <app-card-content>
+              <div class="workflow-placeholder">
+                <div class="workflow-icon">📄</div>
+                <p class="workflow-text">Workflow management interface will be displayed here</p>
+                <app-button (onClick)="onCreateWorkflow()" className="workflow-button">
+                  Create Workflow
+                </app-button>
+              </div>
+            </app-card-content>
+          </app-card>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

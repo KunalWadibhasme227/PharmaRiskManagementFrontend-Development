@@ -1,0 +1,326 @@
+<div class="findings-list-section">
+  <app-tabs [defaultValue]="activeTab" className="findings-tabs">
+    <app-tabs-list className="findings-tabs-list">
+      <app-tabs-trigger
+        value="open"
+        [isActive]="activeTab === 'open'"
+        (click)="onTabChange('open')">
+        Open
+      </app-tabs-trigger>
+      <app-tabs-trigger
+        value="overdue"
+        [isActive]="activeTab === 'overdue'"
+        (click)="onTabChange('overdue')">
+        Overdue
+      </app-tabs-trigger>
+      <app-tabs-trigger
+        value="closed"
+        [isActive]="activeTab === 'closed'"
+        (click)="onTabChange('closed')">
+        Closed
+      </app-tabs-trigger>
+      <app-tabs-trigger
+        value="all"
+        [isActive]="activeTab === 'all'"
+        (click)="onTabChange('all')">
+        All
+      </app-tabs-trigger>
+    </app-tabs-list>
+
+    <app-tabs-content
+      value="open"
+      [isActive]="activeTab === 'open'"
+      className="findings-tabs-content">
+      <app-card>
+        <app-card-header>
+          <app-card-title>Open Findings ({{ filteredFindings.length }})</app-card-title>
+        </app-card-header>
+        <app-card-content className="findings-content">
+          <div
+            *ngFor="let finding of filteredFindings; trackBy: trackByFindingId"
+            class="finding-card">
+            <div class="finding-card-header">
+              <div class="finding-details">
+                <div class="finding-title-row">
+                  <h4 class="finding-name">{{ finding.name }}</h4>
+                  <app-badge [variant]="getCategoryBadgeVariant(finding.category)">
+                    {{ getCategoryBadgeText(finding.category) }}
+                  </app-badge>
+                  <app-badge [variant]="getStatusBadgeVariant(finding.status)">
+                    {{ getStatusBadgeText(finding.status) }}
+                  </app-badge>
+                </div>
+                <p class="finding-description">{{ finding.description }}</p>
+                <div class="finding-info-grid">
+                  <span class="finding-info">Supplier: {{ finding.supplier }}</span>
+                  <span class="finding-info">Identified: {{ getFormattedDate(finding.dateIdentified) }}</span>
+                  <span class="finding-info">Due: {{ getFormattedDate(finding.dueDate) }}</span>
+                </div>
+                <p class="finding-assignee">Assignee: {{ finding.assignee }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="finding.status !== 'closed'" class="finding-progress">
+              <div class="progress-header">
+                <span class="progress-label">Progress</span>
+                <span class="progress-value">{{ finding.progress }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="finding.progress"></div>
+              </div>
+            </div>
+
+            <div class="finding-actions">
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onViewDetails(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">👁️</span>
+                  <span>View Details</span>
+                </span>
+              </app-button>
+              <app-button
+                *ngIf="finding.status !== 'closed'"
+                variant="outline"
+                size="sm"
+                (onClick)="onUpdateProgress(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">✏️</span>
+                  <span>Update Progress</span>
+                </span>
+              </app-button>
+              <app-button
+                *ngIf="finding.status !== 'closed'"
+                variant="default"
+                size="sm"
+                (onClick)="onMarkComplete(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">✅</span>
+                  <span>Mark Complete</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </app-card-content>
+      </app-card>
+    </app-tabs-content>
+
+    <app-tabs-content
+      value="overdue"
+      [isActive]="activeTab === 'overdue'"
+      className="findings-tabs-content">
+      <app-card>
+        <app-card-header>
+          <app-card-title>Overdue Findings ({{ filteredFindings.length }})</app-card-title>
+        </app-card-header>
+        <app-card-content className="findings-content">
+          <div
+            *ngFor="let finding of filteredFindings; trackBy: trackByFindingId"
+            class="finding-card">
+            <div class="finding-card-header">
+              <div class="finding-details">
+                <div class="finding-title-row">
+                  <h4 class="finding-name">{{ finding.name }}</h4>
+                  <app-badge [variant]="getCategoryBadgeVariant(finding.category)">
+                    {{ getCategoryBadgeText(finding.category) }}
+                  </app-badge>
+                  <app-badge [variant]="getStatusBadgeVariant(finding.status)">
+                    {{ getStatusBadgeText(finding.status) }}
+                  </app-badge>
+                </div>
+                <p class="finding-description">{{ finding.description }}</p>
+                <div class="finding-info-grid">
+                  <span class="finding-info">Supplier: {{ finding.supplier }}</span>
+                  <span class="finding-info">Identified: {{ getFormattedDate(finding.dateIdentified) }}</span>
+                  <span class="finding-info">Due: {{ getFormattedDate(finding.dueDate) }}</span>
+                </div>
+                <p class="finding-assignee">Assignee: {{ finding.assignee }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="finding.status !== 'closed'" class="finding-progress">
+              <div class="progress-header">
+                <span class="progress-label">Progress</span>
+                <span class="progress-value">{{ finding.progress }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="finding.progress"></div>
+              </div>
+            </div>
+
+            <div class="finding-actions">
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onViewDetails(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">👁️</span>
+                  <span>View Details</span>
+                </span>
+              </app-button>
+              <app-button
+                *ngIf="finding.status !== 'closed'"
+                variant="outline"
+                size="sm"
+                (onClick)="onUpdateProgress(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">✏️</span>
+                  <span>Update Progress</span>
+                </span>
+              </app-button>
+              <app-button
+                *ngIf="finding.status !== 'closed'"
+                variant="default"
+                size="sm"
+                (onClick)="onMarkComplete(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">✅</span>
+                  <span>Mark Complete</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </app-card-content>
+      </app-card>
+    </app-tabs-content>
+
+    <app-tabs-content
+      value="closed"
+      [isActive]="activeTab === 'closed'"
+      className="findings-tabs-content">
+      <app-card>
+        <app-card-header>
+          <app-card-title>Closed Findings ({{ filteredFindings.length }})</app-card-title>
+        </app-card-header>
+        <app-card-content className="findings-content">
+          <div
+            *ngFor="let finding of filteredFindings; trackBy: trackByFindingId"
+            class="finding-card">
+            <div class="finding-card-header">
+              <div class="finding-details">
+                <div class="finding-title-row">
+                  <h4 class="finding-name">{{ finding.name }}</h4>
+                  <app-badge [variant]="getCategoryBadgeVariant(finding.category)">
+                    {{ getCategoryBadgeText(finding.category) }}
+                  </app-badge>
+                  <app-badge [variant]="getStatusBadgeVariant(finding.status)">
+                    {{ getStatusBadgeText(finding.status) }}
+                  </app-badge>
+                </div>
+                <p class="finding-description">{{ finding.description }}</p>
+                <div class="finding-info-grid">
+                  <span class="finding-info">Supplier: {{ finding.supplier }}</span>
+                  <span class="finding-info">Identified: {{ getFormattedDate(finding.dateIdentified) }}</span>
+                  <span class="finding-info">Due: {{ getFormattedDate(finding.dueDate) }}</span>
+                </div>
+                <p class="finding-assignee">Assignee: {{ finding.assignee }}</p>
+              </div>
+            </div>
+
+            <div class="finding-actions">
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onViewDetails(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">👁️</span>
+                  <span>View Details</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </app-card-content>
+      </app-card>
+    </app-tabs-content>
+
+    <app-tabs-content
+      value="all"
+      [isActive]="activeTab === 'all'"
+      className="findings-tabs-content">
+      <app-card>
+        <app-card-header>
+          <app-card-title>All Findings ({{ filteredFindings.length }})</app-card-title>
+        </app-card-header>
+        <app-card-content className="findings-content">
+          <div
+            *ngFor="let finding of filteredFindings; trackBy: trackByFindingId"
+            class="finding-card">
+            <div class="finding-card-header">
+              <div class="finding-details">
+                <div class="finding-title-row">
+                  <h4 class="finding-name">{{ finding.name }}</h4>
+                  <app-badge [variant]="getCategoryBadgeVariant(finding.category)">
+                    {{ getCategoryBadgeText(finding.category) }}
+                  </app-badge>
+                  <app-badge [variant]="getStatusBadgeVariant(finding.status)">
+                    {{ getStatusBadgeText(finding.status) }}
+                  </app-badge>
+                </div>
+                <p class="finding-description">{{ finding.description }}</p>
+                <div class="finding-info-grid">
+                  <span class="finding-info">Supplier: {{ finding.supplier }}</span>
+                  <span class="finding-info">Identified: {{ getFormattedDate(finding.dateIdentified) }}</span>
+                  <span class="finding-info">Due: {{ getFormattedDate(finding.dueDate) }}</span>
+                </div>
+                <p class="finding-assignee">Assignee: {{ finding.assignee }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="finding.status !== 'closed'" class="finding-progress">
+              <div class="progress-header">
+                <span class="progress-label">Progress</span>
+                <span class="progress-value">{{ finding.progress }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="finding.progress"></div>
+              </div>
+            </div>
+
+            <div class="finding-actions">
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onViewDetails(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">👁️</span>
+                  <span>View Details</span>
+                </span>
+              </app-button>
+              <app-button
+                *ngIf="finding.status !== 'closed'"
+                variant="outline"
+                size="sm"
+                (onClick)="onUpdateProgress(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">✏️</span>
+                  <span>Update Progress</span>
+                </span>
+              </app-button>
+              <app-button
+                *ngIf="finding.status !== 'closed'"
+                variant="default"
+                size="sm"
+                (onClick)="onMarkComplete(finding)"
+                className="finding-action">
+                <span class="action-content">
+                  <span class="action-icon">✅</span>
+                  <span>Mark Complete</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </app-card-content>
+      </app-card>
+    </app-tabs-content>
+  </app-tabs>
+</div>

@@ -1,0 +1,58 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Certifications & Licenses</app-card-title>
+  </app-card-header>
+  <app-card-content className="certifications-content">
+    <div
+      *ngFor="let cert of certifications; trackBy: trackByCertId"
+      class="certification-card">
+      <div class="certification-header">
+        <div class="certification-details">
+          <div class="certification-title-row">
+            <div class="certification-icon">🏆</div>
+            <h4 class="certification-name">{{ cert.name }}</h4>
+          </div>
+          <p class="certification-issuer">Issued by: {{ cert.issuer }}</p>
+          <div class="certification-dates">
+            <span class="certification-date">Issued: {{ getFormattedDate(cert.issueDate) }}</span>
+            <span class="certification-date">Expires: {{ getFormattedDate(cert.expiryDate) }}</span>
+          </div>
+        </div>
+        <div class="certification-status">
+          <app-badge [variant]="getStatusBadgeVariant(cert.status)">
+            {{ getStatusBadgeText(cert.status) }}
+          </app-badge>
+          <div [class]="'expiry-alert ' + getExpiryAlertClass(cert.daysUntilExpiry)">
+            <span class="expiry-icon">{{ getExpiryAlertIcon(cert.daysUntilExpiry) }}</span>
+            <span class="expiry-text">{{ getExpiryAlertText(cert.daysUntilExpiry) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="certification-actions">
+        <app-button
+          variant="outline"
+          size="sm"
+          (onClick)="onViewCertificate(cert)"
+          className="certification-action">
+          View Certificate
+        </app-button>
+        <app-button
+          *ngIf="cert.status === 'expiring-soon' || cert.status === 'expired'"
+          variant="default"
+          size="sm"
+          (onClick)="onRenewCertificate(cert)"
+          className="certification-action">
+          Renew
+        </app-button>
+        <app-button
+          *ngIf="cert.status === 'active'"
+          variant="outline"
+          size="sm"
+          (onClick)="onDownloadCertificate(cert)"
+          className="certification-action">
+          Download
+        </app-button>
+      </div>
+    </div>
+  </app-card-content>
+</app-card>

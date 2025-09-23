@@ -1,0 +1,53 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Form Templates</app-card-title>
+  </app-card-header>
+  <app-card-content>
+    <div class="templates-grid">
+      <div
+        *ngFor="let template of templates; trackBy: trackByTemplateId"
+        class="template-card">
+        <div class="template-header">
+          <div class="template-details">
+            <h4 class="template-name">{{ template.name }}</h4>
+            <p class="template-description">{{ template.description }}</p>
+            <div class="template-badges">
+              <app-badge variant="outline" className="template-badge">
+                {{ template.category }}
+              </app-badge>
+              <app-badge variant="secondary" className="template-badge">
+                {{ template.version }}
+              </app-badge>
+            </div>
+          </div>
+          <div class="template-icon">📄</div>
+        </div>
+
+        <div class="template-info">
+          <p class="template-usage">Used {{ template.usageCount }} times</p>
+          <p class="template-updated">Updated: {{ getFormattedDate(template.lastUpdated) }}</p>
+        </div>
+
+        <div class="template-actions">
+          <app-button
+            variant="outline"
+            size="sm"
+            (onClick)="onUseTemplate(template)"
+            className="template-action-button template-action-primary">
+            <span class="template-action-content">
+              <span class="template-action-icon">+</span>
+              <span>Use Template</span>
+            </span>
+          </app-button>
+          <app-button
+            variant="outline"
+            size="sm"
+            (onClick)="onDownloadTemplate(template)"
+            className="template-action-button">
+            <span class="template-action-icon">📥</span>
+          </app-button>
+        </div>
+      </div>
+    </div>
+  </app-card-content>
+</app-card>

@@ -1,0 +1,113 @@
+<div class="upcoming-audits-section">
+  <!-- Header with Search, Filters, and Actions -->
+  <div class="audits-header">
+    <div class="audits-filters">
+      <div class="search-container">
+        <div class="search-icon">🔍</div>
+        <app-input
+          placeholder="Search audits by supplier or keyword..."
+          [value]="searchTerm"
+          (onInput)="onSearchChange($event)"
+          className="search-input">
+        </app-input>
+      </div>
+      <div class="filter-container">
+        <app-select [value]="filterStatus">
+          <app-select-trigger placeholder="Filter" className="filter-select">
+            <span class="filter-icon">🔽</span>
+            {{ filterStatus === 'all' ? 'All Status' : filterStatus }}
+          </app-select-trigger>
+          <app-select-content>
+            <app-select-item value="all" (click)="onFilterChange('all')">All Status</app-select-item>
+            <app-select-item value="confirmed" (click)="onFilterChange('confirmed')">Confirmed</app-select-item>
+            <app-select-item value="scheduled" (click)="onFilterChange('scheduled')">Scheduled</app-select-item>
+            <app-select-item value="pending" (click)="onFilterChange('pending')">Pending</app-select-item>
+            <app-select-item value="in-progress" (click)="onFilterChange('in-progress')">In Progress</app-select-item>
+          </app-select-content>
+        </app-select>
+      </div>
+    </div>
+    <app-button
+      variant="default"
+      (onClick)="onScheduleAudit()"
+      className="schedule-audit-button">
+      <span class="button-content">
+        <span class="button-icon">+</span>
+        <span>Schedule Audit</span>
+      </span>
+    </app-button>
+  </div>
+
+  <!-- Audit List -->
+  <app-card>
+    <app-card-header>
+      <app-card-title>Upcoming Audits ({{ filteredAudits.length }})</app-card-title>
+    </app-card-header>
+    <app-card-content>
+      <app-scroll-area className="h-96">
+        <div class="audits-list">
+          <div
+            *ngFor="let audit of filteredAudits; trackBy: trackByAuditId"
+            class="audit-card">
+            <div class="audit-card-header">
+              <div class="audit-details">
+                <div class="audit-title-row">
+                  <h4 class="audit-supplier">{{ audit.supplier }}</h4>
+                  <app-badge [variant]="getStatusBadgeVariant(audit.status)">
+                    {{ getStatusBadgeText(audit.status) }}
+                  </app-badge>
+                  <app-badge [variant]="getPriorityBadgeVariant(audit.priority)">
+                    {{ getPriorityBadgeText(audit.priority) }}
+                  </app-badge>
+                </div>
+                <p class="audit-type">{{ audit.auditType }}</p>
+              </div>
+            </div>
+
+            <div class="audit-info-grid">
+              <div class="audit-info-item">
+                <div class="info-icon">📅</div>
+                <span class="info-text">{{ getFormattedDate(audit.date) }} at {{ audit.time }}</span>
+              </div>
+              <div class="audit-info-item">
+                <div class="info-icon">⏱️</div>
+                <span class="info-text">Duration: {{ audit.duration }}</span>
+              </div>
+              <div class="audit-info-item">
+                <div class="info-icon">👤</div>
+                <span class="info-text">{{ audit.auditor }}</span>
+              </div>
+              <div class="audit-info-item">
+                <div class="info-icon">📍</div>
+                <span class="info-text">{{ audit.location }}</span>
+              </div>
+            </div>
+
+            <div class="audit-actions">
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onViewDetails(audit)"
+                className="audit-action">
+                <span class="action-content">
+                  <span class="action-icon">👁️</span>
+                  <span>View Details</span>
+                </span>
+              </app-button>
+              <app-button
+                variant="outline"
+                size="sm"
+                (onClick)="onReschedule(audit)"
+                className="audit-action">
+                <span class="action-content">
+                  <span class="action-icon">📅</span>
+                  <span>Reschedule</span>
+                </span>
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </app-scroll-area>
+    </app-card-content>
+  </app-card>
+</div>

@@ -1,0 +1,25 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Quick Actions</app-card-title>
+  </app-card-header>
+  <app-card-content>
+    <div class="quick-actions-grid">
+      <app-button
+        *ngFor="let action of quickActions; trackBy: trackByActionId"
+        [variant]="action.variant"
+        [className]="'quick-action-button'"
+        (onClick)="onActionClick(action)">
+        <div class="quick-action-content">
+          <div class="quick-action-icon">
+            <!-- Icon will be handled here -->
+            <div [class]="'icon-' + action.id"></div>
+          </div>
+          <div class="quick-action-text">
+            <div class="quick-action-title">{{ action.title }}</div>
+            <div class="quick-action-description">{{ action.description }}</div>
+          </div>
+        </div>
+      </app-button>
+    </div>
+  </app-card-content>
+</app-card>

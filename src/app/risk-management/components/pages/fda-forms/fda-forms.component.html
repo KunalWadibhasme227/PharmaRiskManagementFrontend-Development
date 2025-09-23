@@ -1,0 +1,61 @@
+<div class="fda-forms-page">
+  <div class="fda-forms-content">
+    <app-dashboard-header
+      title="FDA Form Handlers"
+      subtitle="Module for managing FDA-related forms and submissions">
+    </app-dashboard-header>
+
+    <main class="fda-forms-main">
+      <!-- FDA Form Stats -->
+      <section class="stats-section">
+        <h2 class="section-title">FDA Form Statistics</h2>
+        <app-fda-form-stats></app-fda-form-stats>
+      </section>
+
+      <!-- Main Content Tabs -->
+      <app-tabs [defaultValue]="activeTab" className="main-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger
+            value="create"
+            [isActive]="activeTab === 'create'"
+            (click)="onTabChange('create')">
+            Create Forms
+          </app-tabs-trigger>
+          <app-tabs-trigger
+            value="saved"
+            [isActive]="activeTab === 'saved'"
+            (click)="onTabChange('saved')">
+            Saved Forms
+          </app-tabs-trigger>
+          <app-tabs-trigger
+            value="templates"
+            [isActive]="activeTab === 'templates'"
+            (click)="onTabChange('templates')">
+            Templates
+          </app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content
+          value="create"
+          [isActive]="activeTab === 'create'"
+          className="tabs-content-space">
+          <app-create-form-section></app-create-form-section>
+        </app-tabs-content>
+
+        <app-tabs-content
+          value="saved"
+          [isActive]="activeTab === 'saved'"
+          className="tabs-content-space">
+          <app-saved-forms-list></app-saved-forms-list>
+        </app-tabs-content>
+
+        <app-tabs-content
+          value="templates"
+          [isActive]="activeTab === 'templates'"
+          className="tabs-content-space">
+          <app-form-templates></app-form-templates>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

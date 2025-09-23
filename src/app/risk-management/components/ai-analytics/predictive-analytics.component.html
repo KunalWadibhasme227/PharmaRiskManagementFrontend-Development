@@ -1,0 +1,43 @@
+<div class="predictive-analytics-container">
+  <div class="analytics-header">
+    <h3 class="analytics-title">Predictive Analytics</h3>
+    <p class="analytics-subtitle">30-day forecasts based on historical trends</p>
+  </div>
+
+  <div class="predictions-grid">
+    <app-card
+      *ngFor="let prediction of predictions; trackBy: trackByPredictionId"
+      className="prediction-card">
+      <app-card-header className="prediction-header">
+        <div class="prediction-title-section">
+          <div class="prediction-icon">{{ prediction.icon }}</div>
+          <div class="prediction-details">
+            <app-card-title className="prediction-title">{{ prediction.title }}</app-card-title>
+            <app-card-description className="prediction-description">{{ prediction.description }}</app-card-description>
+          </div>
+        </div>
+        <app-badge variant="outline" className="confidence-badge">
+          {{ prediction.confidence }}% confidence
+        </app-badge>
+      </app-card-header>
+      <app-card-content className="prediction-content">
+        <div class="prediction-values">
+          <div class="value-section current">
+            <p class="value-label">Current</p>
+            <p class="value-number">{{ getFormattedValue(prediction.current, prediction.unit) }}</p>
+          </div>
+          <div class="trend-icon">
+            <span [class]="'trend-icon ' + getTrendColor(prediction.trend)">
+              {{ getTrendIcon(prediction.trend) }}
+            </span>
+          </div>
+          <div class="value-section predicted">
+            <p class="value-label">Predicted (30d)</p>
+            <p class="value-number predicted-value">{{ getFormattedValue(prediction.predicted, prediction.unit) }}</p>
+          </div>
+        </div>
+        <app-progress [value]="prediction.confidence" className="confidence-progress"></app-progress>
+      </app-card-content>
+    </app-card>
+  </div>
+</div>

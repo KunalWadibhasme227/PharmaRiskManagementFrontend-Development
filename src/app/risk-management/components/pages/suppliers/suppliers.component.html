@@ -1,0 +1,55 @@
+<div class="suppliers-page">
+  <div class="suppliers-content">
+    <app-dashboard-header
+      title="Supplier Management"
+      subtitle="Module to manage suppliers and related actions">
+    </app-dashboard-header>
+
+    <main class="suppliers-main">
+      <!-- Main Content Tabs -->
+      <app-tabs [defaultValue]="activeTab" className="main-tabs">
+        <app-tabs-list className="tabs-list-3">
+          <app-tabs-trigger
+            value="list"
+            [isActive]="activeTab === 'list'"
+            (click)="onTabChange('list')">
+            Supplier List
+          </app-tabs-trigger>
+          <app-tabs-trigger
+            value="map"
+            [isActive]="activeTab === 'map'"
+            (click)="onTabChange('map')">
+            Supplier Map
+          </app-tabs-trigger>
+          <app-tabs-trigger
+            value="stats"
+            [isActive]="activeTab === 'stats'"
+            (click)="onTabChange('stats')">
+            Supplier Stats
+          </app-tabs-trigger>
+        </app-tabs-list>
+
+        <app-tabs-content
+          value="list"
+          [isActive]="activeTab === 'list'"
+          className="tabs-content-space">
+          <app-supplier-list></app-supplier-list>
+        </app-tabs-content>
+
+        <app-tabs-content
+          value="map"
+          [isActive]="activeTab === 'map'"
+          className="tabs-content-space">
+          <app-supplier-map></app-supplier-map>
+        </app-tabs-content>
+
+        <app-tabs-content
+          value="stats"
+          [isActive]="activeTab === 'stats'"
+          className="tabs-content-space">
+          <app-supplier-stats></app-supplier-stats>
+        </app-tabs-content>
+      </app-tabs>
+    </main>
+  </div>
+</div>

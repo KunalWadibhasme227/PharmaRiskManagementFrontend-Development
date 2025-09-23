@@ -1,0 +1,30 @@
+<app-card>
+  <app-card-header>
+    <app-card-title>Active Risk Alerts</app-card-title>
+  </app-card-header>
+  <app-card-content className="alerts-content">
+    <div
+      *ngFor="let alert of riskAlerts; trackBy: trackByAlertId"
+      class="alert-card">
+      <div class="alert-header">
+        <div class="alert-info">
+          <div class="alert-icon">{{ getAlertIcon(alert.type) }}</div>
+          <div class="alert-details">
+            <h4 class="alert-type">{{ alert.type }}</h4>
+            <p class="alert-description">{{ alert.description }}</p>
+            <p *ngIf="alert.supplier" class="alert-supplier">Supplier: {{ alert.supplier }}</p>
+            <p *ngIf="alert.daysOverdue" class="alert-overdue">{{ alert.daysOverdue }} days overdue</p>
+          </div>
+        </div>
+        <app-badge [variant]="getSeverityBadgeVariant(alert.severity)">
+          {{ getSeverityBadgeText(alert.severity) }}
+        </app-badge>
+      </div>
+      <div class="alert-actions">
+        <app-button size="sm" (onClick)="onTakeAction(alert)" className="action-button">
+          Take Action
+        </app-button>
+      </div>
+    </div>
+  </app-card-content>
+</app-card>

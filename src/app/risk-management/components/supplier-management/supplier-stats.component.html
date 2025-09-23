@@ -1,0 +1,14 @@
+<div class="supplier-stats-grid">
+  <app-card
+    *ngFor="let stat of stats; trackBy: trackByStatTitle"
+    [className]="getVariantStyles(stat.variant)">
+    <app-card-header className="stat-header">
+      <app-card-title [className]="getTitleColor()">{{ stat.title }}</app-card-title>
+      <div [class]="getIconColor(stat.variant)">{{ stat.icon }}</div>
+    </app-card-header>
+    <app-card-content>
+      <div [class]="getValueColor(stat.variant)">{{ stat.value }}</div>
+      <p [class]="getDescriptionColor()">{{ stat.change }}</p>
+    </app-card-content>
+  </app-card>
+</div>

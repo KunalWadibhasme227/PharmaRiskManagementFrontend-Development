@@ -1,0 +1,74 @@
+<div class="ai-recommendations-container">
+  <div class="recommendations-header">
+    <h3 class="recommendations-title">AI Recommendations</h3>
+    <p class="recommendations-subtitle">Actionable recommendations to improve supplier management</p>
+  </div>
+
+  <div class="recommendations-grid">
+    <app-card
+      *ngFor="let recommendation of recommendations; trackBy: trackByRecommendationId"
+      className="recommendation-card">
+      <app-card-header className="recommendation-header">
+        <div class="recommendation-info">
+          <div class="recommendation-icon">{{ recommendation.icon }}</div>
+          <div class="recommendation-details">
+            <app-card-title className="recommendation-title">{{ recommendation.title }}</app-card-title>
+            <app-card-description className="recommendation-description">{{ recommendation.description }}</app-card-description>
+          </div>
+        </div>
+        <app-badge 
+          [variant]="getStatusBadgeVariant(recommendation.status)"
+          [className]="getStatusBadgeClass(recommendation.status)">
+          <span *ngIf="getStatusIcon(recommendation.status)" class="status-icon">
+            {{ getStatusIcon(recommendation.status) }}
+          </span>
+          {{ getStatusBadgeText(recommendation.status) }}
+        </app-badge>
+      </app-card-header>
+      <app-card-content className="recommendation-content">
+        <div class="recommendation-metrics">
+          <div class="metric-item">
+            <p class="metric-label">Impact</p>
+            <p class="metric-value">{{ recommendation.impact }}</p>
+          </div>
+          <div class="metric-item">
+            <p class="metric-label">Savings</p>
+            <p class="metric-value savings-value">{{ recommendation.savings }}</p>
+          </div>
+          <div class="metric-item">
+            <p class="metric-label">Timeframe</p>
+            <p class="metric-value">{{ recommendation.timeframe }}</p>
+          </div>
+        </div>
+        <div class="recommendation-actions">
+          <app-button
+            *ngIf="recommendation.status === 'recommended'"
+            className="implement-button"
+            size="sm"
+            (onClick)="onImplementRecommendation(recommendation)">
+            <span class="action-icon">💰</span>
+            Implement Recommendation
+          </app-button>
+          <app-button
+            *ngIf="recommendation.status === 'in-progress'"
+            variant="outline"
+            className="in-progress-button"
+            size="sm"
+            [disabled]="true">
+            <span class="action-icon">⏰</span>
+            Implementation in Progress
+          </app-button>
+          <app-button
+            *ngIf="recommendation.status === 'completed'"
+            variant="outline"
+            className="completed-button"
+            size="sm"
+            [disabled]="true">
+            <span class="action-icon">✅</span>
+            Completed
+          </app-button>
+        </div>
+      </app-card-content>
+    </app-card>
+  </div>
+</div>

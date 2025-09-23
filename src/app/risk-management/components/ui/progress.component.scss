@@ -1,0 +1,44 @@
+.progress-container {
+  width: 100%;
+  height: 0.5rem;
+  background-color: var(--muted);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 0.25rem;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-high {
+  background-color: var(--primary);
+}
+
+.progress-medium {
+  background-color: var(--accent);
+}
+
+.progress-normal {
+  background-color: var(--secondary);
+}
+
+.progress-low {
+  background-color: var(--destructive);
+}
+
+/* Custom height variants */
+.progress-container.h-2 {
+  height: 0.5rem;
+}
+
+.progress-container.h-4 {
+  height: 1rem;
+}
+
+.progress-container.h-6 {
+  height: 1.5rem;
+}
