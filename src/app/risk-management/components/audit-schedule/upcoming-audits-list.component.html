@@ -11,7 +11,7 @@
           className="search-input">
         </app-input>
       </div>
-      <div class="filter-container">
+      <!-- <div class="filter-container">
         <app-select [value]="filterStatus">
           <app-select-trigger placeholder="Filter" className="filter-select">
             <span class="filter-icon">🔽</span>
@@ -25,7 +25,7 @@
             <app-select-item value="in-progress" (click)="onFilterChange('in-progress')">In Progress</app-select-item>
           </app-select-content>
         </app-select>
-      </div>
+      </div> -->
     </div>
     <app-button
       variant="default"
@@ -110,4 +110,11 @@
       </app-scroll-area>
     </app-card-content>
   </app-card>
+
+  <!-- Schedule Audit Modal -->
+  <app-schedule-audit-modal
+    [isOpen]="isScheduleModalOpen"
+    (onClose)="onScheduleModalClose()"
+    (onSubmit)="onScheduleModalSubmit($event)">
+  </app-schedule-audit-modal>
 </div>

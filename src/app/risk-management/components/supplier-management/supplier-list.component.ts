@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
 import { SupplierStateService } from '../../shared/services/suppliers/supplier-state.service';
+import { Commonservice } from '../../shared/services/common/commonservice.service';
 
 export interface Supplier {
   id: string;
@@ -53,25 +54,16 @@ fromDate: Date | null = null;   // status filter
 isActive: boolean = false; // status filter
 selectedCity:any;
 selectedState:any;
-filteredCities: { id: number; stateId: number; name: string }[] = [];
-states = [
-  { id: 1, name: 'Arizona' },
-  { id: 2, name: 'California' },
-  { id: 3, name: 'Texas' }
-];
+cities: any[] | null = [];
+states: any[] | null = [];
 
-cities = [
-  { id: 1, stateId: 1, name: 'Phoenix' },
-  { id: 2, stateId: 1, name: 'Tucson' },
-  { id: 3, stateId: 2, name: 'Los Angeles' },
-  { id: 4, stateId: 2, name: 'San Diego' },
-  { id: 5, stateId: 3, name: 'Houston' },
-  { id: 6, stateId: 3, name: 'Dallas' }
-];
+
 
 
   constructor(private supplierService: SupplierService, private notify: NotificationService
-    , private router: Router, private supplierState : SupplierStateService) { }
+    , private router: Router, private supplierState : SupplierStateService, private commonService: Commonservice) {
+      this.fetchStates();
+     }
 
   ngOnInit(): void {
     this.fetchSuppliers();
@@ -85,8 +77,8 @@ cities = [
       classificationIds: null,
       naics: null,
       country: 2,
-      state: null,
-      city: null,
+      state: this.selectedState,
+      city: this.selectedCity,
       fromDate: this.fromDate ? this.fromDate.toISOString().split('T')[0] : null,
       toDate: this.toDate ? this.toDate.toISOString().split('T')[0] : null,
       yearEstablished: null,
@@ -103,8 +95,24 @@ cities = [
   }
 
   onStateChange(stateId: number) {
-  this.filteredCities = this.cities.filter(city => city.stateId === stateId);
-  this.selectedCity = null; // reset city when state changes
+  console.log('Selected state ID:', stateId);
+  // Fetch cities based on selected state
+  this.commonService.getCitiesByState(stateId).subscribe({  
+    next: (res: any) => {
+      const items = res ?? [];
+      if (!Array.isArray(items) || items.length === 0) {
+        this.cities = [];
+        this.notify.Error('No cities found for the selected state');
+        return;
+      }
+      this.cities = items;
+      console.log('cities:', this.cities);
+    },
+    error: (err) => {
+      console.error('Failed to load cities', err);
+      this.notify.Error('Failed to load cities. Please try again later.');
+    }
+  });
 }
 
 fetchSuppliers(): void {
@@ -200,6 +208,25 @@ clearFilters(): void {
   this.fetchSuppliers();
 }
 
+fetchStates(): void {
+  this.commonService.getStates().subscribe({
+    next: (res: any) => {
+      const items = res ?? [];  
+      if (!Array.isArray(items) || items.length === 0) {
+        this.notify.Error('No states found');
+        return;
+      }
+      this.states = items;
+      console.log('states:', this.states);
+    }
+  ,
+    error: (err) => {
+      console.error('Failed to load states', err);
+      this.notify.Error('Failed to load states. Please try again later.');
+    }
+  });
+}
+  
   // getComplianceBadgeVariant(compliance: Supplier["compliance"]): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
   //   switch (compliance) {
   //     case "compliant":
