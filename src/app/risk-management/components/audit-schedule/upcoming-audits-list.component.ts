@@ -6,6 +6,7 @@ import { InputComponent } from '../ui/input.component';
 import { BadgeComponent } from '../ui/badge.component';
 import { ScrollAreaComponent } from '../ui/scroll-area.component';
 import { SelectComponent, SelectTriggerComponent, SelectContentComponent, SelectItemComponent } from '../ui/select.component';
+import { ScheduleAuditModalComponent, ScheduleAuditFormData } from './schedule-audit-modal.component';
 
 export interface UpcomingAudit {
   id: string;
@@ -36,7 +37,8 @@ export interface UpcomingAudit {
     SelectComponent,
     SelectTriggerComponent,
     SelectContentComponent,
-    SelectItemComponent
+    SelectItemComponent,
+    ScheduleAuditModalComponent
   ],
   templateUrl: './upcoming-audits-list.component.html',
   styleUrls: ['./upcoming-audits-list.component.scss']
@@ -44,6 +46,7 @@ export interface UpcomingAudit {
 export class UpcomingAuditsListComponent {
   searchTerm = '';
   filterStatus = 'all';
+  isScheduleModalOpen = false;
 
   upcomingAudits: UpcomingAudit[] = [
     {
@@ -185,8 +188,18 @@ export class UpcomingAuditsListComponent {
   }
 
   onScheduleAudit(): void {
-    console.log('Scheduling new audit');
+    this.isScheduleModalOpen = true;
+  }
+
+  onScheduleModalClose(): void {
+    this.isScheduleModalOpen = false;
+  }
+
+  onScheduleModalSubmit(formData: ScheduleAuditFormData): void {
+    console.log('Scheduling new audit with data:', formData);
     // Handle schedule audit logic here
+    // For now, we'll just close the modal
+    this.isScheduleModalOpen = false;
   }
 
   onViewDetails(audit: UpcomingAudit): void {

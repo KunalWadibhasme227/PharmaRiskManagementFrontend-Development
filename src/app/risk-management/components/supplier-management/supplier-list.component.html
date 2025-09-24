@@ -173,7 +173,7 @@
   <mat-label>State</mat-label>
   <mat-select [(ngModel)]="selectedState" (selectionChange)="onStateChange($event.value)">
     <mat-option [value]="null" disabled>Select State</mat-option>
-    <mat-option *ngFor="let state of states" [value]="state.id">{{ state.name }}</mat-option>
+    <mat-option *ngFor="let state of states" [value]="state.id">{{ state.stateName }}</mat-option>
   </mat-select>
 </mat-form-field>
 
@@ -182,7 +182,7 @@
   <mat-label>City</mat-label>
   <mat-select [(ngModel)]="selectedCity">
     <mat-option [value]="null" disabled>Select City</mat-option>
-    <mat-option *ngFor="let city of filteredCities" [value]="city.id">{{ city.name }}</mat-option>
+    <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.city }}</mat-option>
   </mat-select>
 </mat-form-field>
 <div class="d-flex justify-content-center gap-2 mt-4">
