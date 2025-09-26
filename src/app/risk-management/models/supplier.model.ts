@@ -39,3 +39,9 @@ export interface SupplierListRequest {
   syncHistoryId: number | null;
   epId: number | null;
 }
+export interface AuditRequestDto {
+  statusId: number;
+  searchText?: string | null;
+  pageNumber: number;
+  pageSize: number;
+}

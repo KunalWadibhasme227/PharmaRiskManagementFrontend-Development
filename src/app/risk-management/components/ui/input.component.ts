@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
       [placeholder]="placeholder"
       [class]="inputClasses"
       [value]="value"
+      [attr.min]="min"
       (input)="handleInput($event)"
       (blur)="onBlur.emit($event)"
       (focus)="onFocus.emit($event)">
@@ -55,7 +56,7 @@ export class InputComponent {
   @Output() onBlur = new EventEmitter<Event>();
   @Output() onFocus = new EventEmitter<Event>();
   @Output() onInput = new EventEmitter<Event>();
-
+  @Input() min?: string;
   get inputClasses(): string {
     return 'input-field';
   }

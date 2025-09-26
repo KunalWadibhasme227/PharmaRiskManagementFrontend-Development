@@ -17,4 +17,8 @@ export class SupplierStateService {
   getCurrentSupplier() {
     return this.selectedSupplier$.value;
   }
+  clearCurrentSupplier() {
+    this.selectedSupplier$.next(null); 
+    
+  }
 }
