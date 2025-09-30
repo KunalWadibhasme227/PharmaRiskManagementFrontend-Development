@@ -4,11 +4,8 @@
     <div class="audits-filters">
       <div class="search-container">
         <div class="search-icon">🔍</div>
-        <app-input
-          placeholder="Search audits by supplier or keyword..."
-          [value]="searchTerm"
-          (onInput)="onSearchChange($event)"
-          className="search-input">
+        <app-input placeholder="Search audits by supplier or keyword..." [value]="searchTerm"
+          (onInput)="onSearchChange($event)" className="search-input">
         </app-input>
       </div>
       <!-- <div class="filter-container">
@@ -27,10 +24,7 @@
         </app-select>
       </div> -->
     </div>
-    <app-button
-      variant="default"
-      (onClick)="onScheduleAudit()"
-      className="schedule-audit-button">
+    <app-button variant="default" (onClick)="onScheduleAudit()" className="schedule-audit-button">
       <span class="button-content">
         <span class="button-icon">+</span>
         <span>Schedule Audit</span>
@@ -41,64 +35,57 @@
   <!-- Audit List -->
   <app-card>
     <app-card-header>
-      <app-card-title>Upcoming Audits ({{ filteredAudits.length }})</app-card-title>
+      <app-card-title>Upcoming Audits ({{ upcomingAudits.length }})</app-card-title>
     </app-card-header>
     <app-card-content>
       <app-scroll-area className="h-96">
         <div class="audits-list">
-          <div
-            *ngFor="let audit of filteredAudits; trackBy: trackByAuditId"
-            class="audit-card">
+          <div *ngFor="let audit of upcomingAudits;" class="audit-card">
             <div class="audit-card-header">
               <div class="audit-details">
                 <div class="audit-title-row">
-                  <h4 class="audit-supplier">{{ audit.supplier }}</h4>
-                  <app-badge [variant]="getStatusBadgeVariant(audit.status)">
-                    {{ getStatusBadgeText(audit.status) }}
+                  <h4 class="audit-supplier">{{ audit.supplierId }}</h4>
+                  <app-badge [variant]="getStatusBadgeVariant(audit.statusId)">
+                    {{ getStatusBadgeText(audit.statusId) }}
                   </app-badge>
-                  <app-badge [variant]="getPriorityBadgeVariant(audit.priority)">
-                    {{ getPriorityBadgeText(audit.priority) }}
-                  </app-badge>
+                  <!-- <app-badge>
+                    {{ audit.priority}}
+                  </app-badge> -->
                 </div>
-                <p class="audit-type">{{ audit.auditType }}</p>
+                <p class="audit-type">{{ audit.auditTypeName }}</p>
               </div>
             </div>
 
             <div class="audit-info-grid">
               <div class="audit-info-item">
                 <div class="info-icon">📅</div>
-                <span class="info-text">{{ getFormattedDate(audit.date) }} at {{ audit.time }}</span>
+                <span class="info-text">{{ getFormattedDateTime(audit.auditDate) }}</span>
               </div>
               <div class="audit-info-item">
                 <div class="info-icon">⏱️</div>
-                <span class="info-text">Duration: {{ audit.duration }}</span>
+                <span class="info-text"
+                  [ngStyle]="{'color': (audit.auditDate | remainingDuration) === 'Expired' ? 'red' : 'inherit'}">
+                  Duration: {{ audit.auditDate | remainingDuration }}
+                </span>
               </div>
               <div class="audit-info-item">
                 <div class="info-icon">👤</div>
-                <span class="info-text">{{ audit.auditor }}</span>
+                <span class="info-text">{{ audit.auditorName }}</span>
               </div>
               <div class="audit-info-item">
                 <div class="info-icon">📍</div>
-                <span class="info-text">{{ audit.location }}</span>
+                <span class="info-text">{{ audit.location ?? '---' }}</span>
               </div>
             </div>
 
             <div class="audit-actions">
-              <app-button
-                variant="outline"
-                size="sm"
-                (onClick)="onViewDetails(audit)"
-                className="audit-action">
+              <app-button variant="outline" size="sm" (onClick)="onViewDetails(audit)" className="audit-action">
                 <span class="action-content">
                   <span class="action-icon">👁️</span>
                   <span>View Details</span>
                 </span>
               </app-button>
-              <app-button
-                variant="outline"
-                size="sm"
-                (onClick)="onReschedule(audit)"
-                className="audit-action">
+              <app-button variant="outline" size="sm" (onClick)="onReschedule(audit)" className="audit-action">
                 <span class="action-content">
                   <span class="action-icon">📅</span>
                   <span>Reschedule</span>
@@ -110,11 +97,20 @@
       </app-scroll-area>
     </app-card-content>
   </app-card>
+  <div class="card-footer pagination-controls">
+    <app-button variant="outline" size="sm" (onClick)="prevPage()" [disabled]="!canGoPrev() || loading">
+      Previous
+    </app-button>
+
+    <span class="page-info">Page {{ pageNumber }} of {{ totalPages }}</span>
+
+    <app-button variant="outline" size="sm" (onClick)="nextPage()" [disabled]="!canGoNext() || loading">
+      Next
+    </app-button>
+  </div>
 
   <!-- Schedule Audit Modal -->
-  <app-schedule-audit-modal
-    [isOpen]="isScheduleModalOpen"
-    (onClose)="onScheduleModalClose()"
+  <app-schedule-audit-modal [isOpen]="isScheduleModalOpen" (onClose)="onScheduleModalClose()"
     (onSubmit)="onScheduleModalSubmit($event)">
   </app-schedule-audit-modal>
 </div>

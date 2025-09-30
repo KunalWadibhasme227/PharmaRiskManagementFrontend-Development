@@ -1,0 +1,58 @@
+<div class="suppliers-page">
+  <div class="suppliers-content">
+    <app-dashboard-header
+      title="Supplier Management"
+      subtitle="Module to manage suppliers and related actions">
+    </app-dashboard-header>
+  </div>
+</div>
+
+<div class="supplier-details-shell">
+  <!-- Back and title row -->
+  <div class="details-topbar">
+    <button class="back-btn" (click)="goBack()">← Back to list</button>
+  </div>
+
+  <!-- Card -->
+  <app-card class="details-card">
+    <app-card-content>
+      <div class="detail-grid">
+        <!-- Column 1 -->
+        
+        <div class="field">
+          <div class="label">Supplier Name : </div>
+          <div class="value">{{ audit.supplierId }}</div>
+        </div>
+        <div class="field">
+          <div class="label">Auditor Name : </div>
+          <div class="value">{{ audit.auditorName }}</div>
+        </div>
+        <div class="field">
+          <div class="label">Auditype : </div>
+          <div class="value">{{ audit.auditTypeName }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Date : </div>
+          <div class="value">{{ getFormattedDateTime(audit.auditDate) }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Duration : </div>
+          <span 
+          class="info-text" 
+          [ngStyle]="{'color': (audit.auditDate | remainingDuration) === 'Expired' ? 'red' : 'inherit'}"
+        >
+          Duration: {{ audit.auditDate | remainingDuration }}
+        </span>
+        </div>
+        <div class="field">
+          <div class="label">Location : </div>
+          <div class="value">
+            {{ '---------' }}
+          </div>
+        </div>
+      </div>
+    </app-card-content>
+  </app-card>
+</div>

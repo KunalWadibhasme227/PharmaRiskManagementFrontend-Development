@@ -20,6 +20,7 @@ export const routes: Routes = [
   { path: 'risk', loadComponent: () => import('./risk-management/components/pages/risk/risk.component').then(m => m.RiskComponent) },
   { path: 'ai-analytics', loadComponent: () => import('./risk-management/components/pages/ai-analytics/ai-analytics.component').then(m => m.AIAnalyticsComponent) },
   { path: 'documents', loadComponent: () => import('./risk-management/components/pages/documents/documents.component').then(m => m.DocumentsComponent) },
-  { path: 'suppliers/details', component: SupplierDetailsComponent }
+  { path: 'suppliers/details', component: SupplierDetailsComponent },
+  { path: 'audits/view', loadComponent: () => import('./risk-management/components/audit-schedule/viewaudits/viewaudits').then(m => m.Viewaudits) }
 
 ];

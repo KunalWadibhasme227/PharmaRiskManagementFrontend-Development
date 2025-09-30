@@ -4,18 +4,9 @@ import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComp
 import { ButtonComponent } from '../ui/button.component';
 import { BadgeComponent } from '../ui/badge.component';
 import { ScrollAreaComponent } from '../ui/scroll-area.component';
-
-export interface CompletedAudit {
-  id: string;
-  supplier: string;
-  auditType: string;
-  date: string;
-  auditor: string;
-  location: string;
-  auditScore: number;
-  result: "passed" | "passed-with-conditions" | "failed";
-  findings: number;
-}
+import { ScheduleAuditService } from '../../shared/services/scheduleaudit/schedule-audit.service';
+import { Router } from '@angular/router';
+import { AuditRequestDto } from '../../models/supplier.model';
 
 @Component({
   selector: 'app-completed-audits-list',
@@ -34,84 +25,64 @@ export interface CompletedAudit {
   styleUrls: ['./completed-audits-list.component.scss']
 })
 export class CompletedAuditsListComponent {
-  completedAudits: CompletedAudit[] = [
-    {
-      id: "1",
-      supplier: "PharmaCorp Ltd",
-      auditType: "GMP Audit",
-      date: "2024-12-15",
-      auditor: "Sarah Johnson",
-      location: "Boston, MA",
-      auditScore: 94,
-      result: "passed",
-      findings: 2,
-    },
-    {
-      id: "2",
-      supplier: "BioTech Solutions",
-      auditType: "Quality Audit",
-      date: "2024-12-10",
-      auditor: "Michael Chen",
-      location: "San Diego, CA",
-      auditScore: 87,
-      result: "passed-with-conditions",
-      findings: 5,
-    },
-    {
-      id: "3",
-      supplier: "MedSupply Inc",
-      auditType: "Compliance Audit",
-      date: "2024-12-05",
-      auditor: "Emily Davis",
-      location: "Chicago, IL",
-      auditScore: 72,
-      result: "failed",
-      findings: 12,
-    },
-    {
-      id: "4",
-      supplier: "ChemSource Ltd",
-      auditType: "ISO Audit",
-      date: "2024-11-28",
-      auditor: "Robert Wilson",
-      location: "Houston, TX",
-      auditScore: 96,
-      result: "passed",
-      findings: 1,
-    },
-    {
-      id: "5",
-      supplier: "GlobalMed Corp",
-      auditType: "FDA Inspection",
-      date: "2024-11-20",
-      auditor: "Lisa Anderson",
-      location: "New York, NY",
-      auditScore: 78,
-      result: "passed-with-conditions",
-      findings: 8,
-    },
-  ];
+  searchTerm = '';
+  pageNumber = 1;
+  pageSize = 5;
+  totalRecords = 0;
+  loading = false;
+  completedAudits: any[] = [];
 
-  getResultBadgeVariant(result: CompletedAudit["result"]): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
-    switch (result) {
-      case "passed":
+  constructor(private auditService: ScheduleAuditService) {
+    this.getAudits();
+  }
+
+  private buildAuditRequestDto(): AuditRequestDto {
+    return {
+      statusId: 2,
+      searchText: this.searchTerm || '',
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize
+    };
+  }
+
+  getAudits() {
+    const filter = this.buildAuditRequestDto();
+    this.auditService.getScheduledAudits(filter).subscribe({
+      next: (res: any) => {
+        this.completedAudits = res.records;
+        this.totalRecords = res?.totalCount ?? 0;
+        console.log(res);
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.completedAudits = [];
+        this.totalRecords = 0;
+        this.pageNumber = 1;
+        this.pageSize = 5;
+      }
+    });
+  }
+
+  getResultBadgeVariant(result: number): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
+    switch (true) {
+      case result >= 80:
         return "primary";
-      case "passed-with-conditions":
+      case result >= 50:
         return "accent";
-      case "failed":
+      case result < 50:
         return "destructive";
       default:
         return "default";
     }
   }
 
-  getResultBadgeText(result: CompletedAudit["result"]): string {
-    switch (result) {
-      case "passed":
+  getResultBadgeText(result: number): string {
+    switch (true) {
+      case result >= 80:
         return "Passed";
-      case "passed-with-conditions":
+      case result >= 50:
         return "Passed with Conditions";
-      case "failed":
+      case result < 50:
         return "Failed";
       default:
         return "";
@@ -124,16 +95,49 @@ export class CompletedAuditsListComponent {
     return "score-low";
   }
 
-  onViewReport(audit: CompletedAudit): void {
+  onViewReport(audit: any): void {
     console.log('Viewing report for:', audit.supplier);
     // Handle view report logic here
   }
 
-  getFormattedDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString();
+  getFormattedDateTime(isoString: string): string {
+    const dateObj = new Date(isoString);
+
+    const optionsDate: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    //const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+
+    const formattedDate = dateObj.toLocaleDateString('en-US', optionsDate);
+    //const formattedTime = dateObj.toLocaleTimeString('en-US', optionsTime);
+    return `${formattedDate}`;
+    //return `${formattedDate} at ${formattedTime}`;
   }
 
-  trackByAuditId(index: number, audit: CompletedAudit): string {
+
+  prevPage() {
+    if (this.pageNumber > 1) {
+      this.pageNumber--;
+      this.getAudits();
+    }
+  }
+
+  nextPage() {
+    if (this.pageNumber * this.pageSize < this.totalRecords) {
+      this.pageNumber++;
+      this.getAudits();
+    }
+  }
+  canGoPrev(): boolean {
+    return this.pageNumber > 1;
+  }
+
+  canGoNext(): boolean {
+    return this.pageNumber * this.pageSize < this.totalRecords;
+  }
+  get totalPages(): number {
+    return this.totalRecords > 0 ? Math.ceil(this.totalRecords / this.pageSize) : 1;
+  }
+
+  trackByAuditId(index: number, audit: any): string {
     return audit.id;
   }
 }

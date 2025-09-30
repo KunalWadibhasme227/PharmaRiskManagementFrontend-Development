@@ -8,21 +8,13 @@
           <span>Audit Calendar</span>
         </app-card-title>
         <div class="calendar-controls">
-          <app-button
-            variant="outline"
-            size="sm"
-            (onClick)="previousMonth()"
-            className="calendar-nav-button">
+          <app-button variant="outline" size="sm" (onClick)="previousMonth()" className="calendar-nav-button">
             <span class="nav-icon">◀</span>
           </app-button>
           <span class="calendar-month">
             {{ monthNames[currentMonth] }} {{ currentYear }}
           </span>
-          <app-button
-            variant="outline"
-            size="sm"
-            (onClick)="nextMonth()"
-            className="calendar-nav-button">
+          <app-button variant="outline" size="sm" (onClick)="nextMonth()" className="calendar-nav-button">
             <span class="nav-icon">▶</span>
           </app-button>
         </div>
@@ -32,28 +24,37 @@
       <!-- Calendar Grid -->
       <div class="calendar-grid">
         <!-- Day headers -->
-        <div
-          *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
-          class="calendar-day-header">
+        <div *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" class="calendar-day-header">
           {{ day }}
         </div>
         <!-- Calendar days -->
-        <div
-          *ngFor="let dayData of getCalendarDays(); let i = index"
+        <div *ngFor="let dayData of getCalendarDays(); let i = index"
           [class]="dayData ? 'calendar-day' : 'calendar-day-empty'">
           <div *ngIf="dayData" class="day-content">
             <div class="day-number">{{ dayData.day }}</div>
             <div class="day-audits">
-              <div
+              <!-- <div
                 *ngFor="let audit of dayData.audits.slice(0, 2); trackBy: trackByAuditId"
                 class="audit-item"
                 (click)="onAuditClick(audit)"
-                [title]="audit.supplier + ' - ' + audit.auditType + ' at ' + audit.time">
-                {{ audit.supplier }}
+                [title]="audit.supplierId + ' - ' + audit.auditTypeName + ' at ' + getFormattedDateTime(audit.auditDate)">
+                {{ audit.supplierId + ' - ' + getFormattedDateTime(audit.auditDate) }}
+              </div> -->
+              <div *ngFor="let audit of dayData.audits.slice(0, 2); trackBy: trackByAuditId" class="status-badge" [ngClass]="audit.statusId === 1 ? 'pending' : 'completed'"
+                (click)="onAuditClick(audit)"
+                [title]="audit.supplierId + ' - ' + audit.auditTypeName + ' at ' + getFormattedDateTime(audit.auditDate)">
+                <!-- left: supplier name (optional) -->
+                <span class="status-badge">{{ audit.supplierId + getFormattedDateTime(audit.auditDate) }}</span>
+
+                <!-- right: small pill status -->
+                <!-- <span class="status-badge" [ngClass]="audit.statusId === 1 ? 'pending' : 'completed'">
+                  {{ audit.statusId === 1 ? 'Pending' : 'Completed' }}
+                </span> -->
               </div>
-              <div
-                *ngIf="dayData.audits.length > 2"
-                class="more-audits">
+
+
+
+              <div *ngIf="dayData.audits.length > 2" class="more-audits">
                 +{{ dayData.audits.length - 2 }} more
               </div>
             </div>

@@ -196,6 +196,64 @@
   color: var(--primary);
 }
 
+/* container row */
+.audit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* supplier left, badge right */
+  gap: 0.75rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+/* small text (supplier) */
+.audit-text {
+  font-size: 0.9rem;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* status pill */
+.status-badge {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Pending (orange) */
+.status-badge.pending {
+  --sb-border: #f59e0b;
+  /* orange-400 */
+  --sb-text: #c2410c;
+  /* orange-600 */
+  --sb-bg: #fff7ed;
+  /* very light orange */
+  color: var(--sb-text);
+  background-color: var(--sb-bg);
+  border: 1px solid var(--sb-border);
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+/* Completed (neutral/green/etc) */
+.status-badge.completed {
+  --sb-border: #0ab498;
+  /* gray */
+  --sb-text: #0a5a5a;
+  --sb-bg: #f8fafc;
+  color: var(--sb-text);
+  background-color: var(--sb-bg);
+  border: 1px solid var(--sb-border);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .calendar-header {
@@ -203,12 +261,12 @@
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .calendar-controls {
     width: 100%;
     justify-content: center;
   }
-  
+
   .calendar-summary {
     grid-template-columns: 1fr;
   }
@@ -218,11 +276,11 @@
   .calendar-day {
     height: 4rem;
   }
-  
+
   .calendar-day-empty {
     height: 4rem;
   }
-  
+
   .audit-item {
     font-size: 0.625rem;
     padding: 0.125rem;

@@ -12,18 +12,18 @@
             <div class="audit-card-header">
               <div class="audit-details">
                 <div class="audit-title-row">
-                  <h4 class="audit-supplier">{{ audit.supplier }}</h4>
-                  <app-badge [variant]="getResultBadgeVariant(audit.result)">
-                    {{ getResultBadgeText(audit.result) }}
+                  <h4 class="audit-supplier">{{ audit.supplierId }}</h4>
+                  <app-badge [variant]="getResultBadgeVariant(audit.score)">
+                    {{ getResultBadgeText(audit.score) }}
                   </app-badge>
                 </div>
-                <p class="audit-type">{{ audit.auditType }}</p>
+                <p class="audit-type">{{ audit.auditTypeName }}</p>
               </div>
               <div class="audit-score-section">
                 <div class="score-display">
                   <div class="score-icon">🏆</div>
-                  <span [class]="'score-value ' + getScoreColor(audit.auditScore)">
-                    {{ audit.auditScore }}%
+                  <span [class]="'score-value ' + getScoreColor(audit.score)">
+                    {{ audit.score }}%
                   </span>
                 </div>
                 <p class="score-label">Audit Score</p>
@@ -33,15 +33,15 @@
             <div class="audit-info-grid">
               <div class="audit-info-item">
                 <div class="info-icon">📅</div>
-                <span class="info-text">{{ getFormattedDate(audit.date) }}</span>
+                <span class="info-text">{{ getFormattedDateTime(audit.auditDate) }}</span>
               </div>
               <div class="audit-info-item">
                 <div class="info-icon">👤</div>
-                <span class="info-text">{{ audit.auditor }}</span>
+                <span class="info-text">{{ audit.auditorName }}</span>
               </div>
               <div class="audit-info-item">
                 <div class="info-icon">📍</div>
-                <span class="info-text">{{ audit.location }}</span>
+                <span class="info-text">{{ audit.location ?? '------'}}</span>
               </div>
             </div>
 
@@ -65,4 +65,15 @@
       </app-scroll-area>
     </app-card-content>
   </app-card>
+  <div class="card-footer pagination-controls">
+    <app-button variant="outline" size="sm" (onClick)="prevPage()" [disabled]="!canGoPrev() || loading">
+      Previous
+    </app-button>
+
+    <span class="page-info">Page {{ pageNumber }} of {{ totalPages }}</span>
+
+    <app-button variant="outline" size="sm" (onClick)="nextPage()" [disabled]="!canGoNext() || loading">
+      Next
+    </app-button>
+  </div>
 </div>
