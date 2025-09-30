@@ -1,7 +1,7 @@
 <div class="audit-calendar-section">
   <!-- Calendar Header -->
   <app-card>
-    <app-card-header>
+    <!-- <app-card-header>
       <div class="calendar-header">
         <app-card-title className="calendar-title">
           <span class="calendar-icon">📅</span>
@@ -21,39 +21,21 @@
       </div>
     </app-card-header>
     <app-card-content>
-      <!-- Calendar Grid -->
       <div class="calendar-grid">
-        <!-- Day headers -->
         <div *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" class="calendar-day-header">
           {{ day }}
         </div>
-        <!-- Calendar days -->
         <div *ngFor="let dayData of getCalendarDays(); let i = index"
           [class]="dayData ? 'calendar-day' : 'calendar-day-empty'">
           <div *ngIf="dayData" class="day-content">
             <div class="day-number">{{ dayData.day }}</div>
             <div class="day-audits">
-              <!-- <div
-                *ngFor="let audit of dayData.audits.slice(0, 2); trackBy: trackByAuditId"
-                class="audit-item"
-                (click)="onAuditClick(audit)"
-                [title]="audit.supplierId + ' - ' + audit.auditTypeName + ' at ' + getFormattedDateTime(audit.auditDate)">
-                {{ audit.supplierId + ' - ' + getFormattedDateTime(audit.auditDate) }}
-              </div> -->
+              
               <div *ngFor="let audit of dayData.audits.slice(0, 2); trackBy: trackByAuditId" class="status-badge" [ngClass]="audit.statusId === 1 ? 'pending' : 'completed'"
                 (click)="onAuditClick(audit)"
                 [title]="audit.supplierId + ' - ' + audit.auditTypeName + ' at ' + getFormattedDateTime(audit.auditDate)">
-                <!-- left: supplier name (optional) -->
                 <span class="status-badge">{{ audit.supplierId + getFormattedDateTime(audit.auditDate) }}</span>
-
-                <!-- right: small pill status -->
-                <!-- <span class="status-badge" [ngClass]="audit.statusId === 1 ? 'pending' : 'completed'">
-                  {{ audit.statusId === 1 ? 'Pending' : 'Completed' }}
-                </span> -->
-              </div>
-
-
-
+            </div>
               <div *ngIf="dayData.audits.length > 2" class="more-audits">
                 +{{ dayData.audits.length - 2 }} more
               </div>
@@ -61,7 +43,85 @@
           </div>
         </div>
       </div>
-    </app-card-content>
+    </app-card-content> -->
+    <!-- src/app/calendar/calendar.component.html -->
+
+<div class="audit-calendar-section">
+  <app-card>
+    <div class="row align-items-center mb-2">
+      <div class="col-md-4">
+        <div class="btn-group">
+          <button class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">Previous</button>
+          <button class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">Today</button>
+          <button class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">Next</button>
+        </div>
+      </div>
+
+      <div class="col-md-4 text-center">
+        <h5 class="calendar-title">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h5>
+      </div>
+
+      <div class="col-md-4 text-end">
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">Month</button>
+          <button class="btn btn-sm btn-outline-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">Week</button>
+          <button class="btn btn-sm btn-outline-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">Day</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-wrapper">
+      <ng-container [ngSwitch]="view">
+        <mwl-calendar-month-view
+          *ngSwitchDefault
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          [activeDayIsOpen]="activeDayIsOpen"
+          (dayClicked)="dayClicked($event.day)"
+          (eventClicked)="handleEvent($event.event)">
+        </mwl-calendar-month-view>
+
+        <mwl-calendar-week-view
+          *ngSwitchCase="CalendarView.Week"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          (eventClicked)="handleEvent($event.event)">
+        </mwl-calendar-week-view>
+
+        <mwl-calendar-day-view
+          *ngSwitchCase="CalendarView.Day"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          (eventClicked)="handleEvent($event.event)">
+        </mwl-calendar-day-view>
+      </ng-container>
+    </div>
+
+    <ng-template #modalContent let-close="close">
+      <div class="modal-header">
+        <h5 class="modal-title">Audit Details</h5>
+        <button type="button" class="btn-close" (click)="close()"></button>
+      </div>
+      <div class="modal-body" *ngIf="modalData?.event?.meta">
+        <p><strong>Supplier ID:</strong> {{ modalData?.event?.meta?.supplierId }}</p>
+        <p><strong>Audit Type:</strong> {{ modalData?.event?.meta?.auditTypeName }}</p>
+        <p><strong>Audit Date:</strong> {{ modalData?.event?.meta?.auditDate | date:'medium' }}</p>
+        <p *ngIf="modalData?.event?.meta?.score"><strong>Score:</strong> {{ modalData?.event?.meta?.score }}</p>
+        <p *ngIf="modalData?.event?.meta?.statusId"><strong>Status:</strong> {{ modalData?.event?.meta?.statusId === 1 ? 'Upcoming' : 'Completed' }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="close()">Close</button>
+      </div>
+    </ng-template>
+
+  </app-card>
+</div>
+
+
+
   </app-card>
 
   <!-- Audit Legend and Summary -->
@@ -77,7 +137,7 @@
         </div>
         <div class="legend-item">
           <div class="legend-color legend-passed"></div>
-          <span class="legend-text">Passed Audits</span>
+          <span class="legend-text">Completed Audits</span>
         </div>
         <div class="legend-item">
           <div class="legend-color legend-failed"></div>
@@ -93,15 +153,15 @@
       <app-card-content className="summary-content">
         <div class="summary-item">
           <span class="summary-label">Upcoming Audits:</span>
-          <span class="summary-value">3</span>
+          <span class="summary-value">{{countupcoming}}</span>
         </div>
         <div class="summary-item">
           <span class="summary-label">Completed Audits:</span>
-          <span class="summary-value">2</span>
+          <span class="summary-value">{{countcompleted}}</span>
         </div>
         <div class="summary-item">
           <span class="summary-label">Success Rate:</span>
-          <span class="summary-value success">50%</span>
+          <!-- <span class="summary-value success">50%</span> -->
         </div>
       </app-card-content>
     </app-card>

@@ -56,7 +56,7 @@ export class InputComponent {
   @Output() onBlur = new EventEmitter<Event>();
   @Output() onFocus = new EventEmitter<Event>();
   @Output() onInput = new EventEmitter<Event>();
-  @Input() min?: string;
+  @Input() min?: string|null;
   get inputClasses(): string {
     return 'input-field';
   }

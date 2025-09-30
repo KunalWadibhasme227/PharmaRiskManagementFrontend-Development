@@ -43,7 +43,7 @@
           class="info-text" 
           [ngStyle]="{'color': (audit.auditDate | remainingDuration) === 'Expired' ? 'red' : 'inherit'}"
         >
-          Duration: {{ audit.auditDate | remainingDuration }}
+          {{ audit.auditDate | remainingDuration }}
         </span>
         </div>
         <div class="field">

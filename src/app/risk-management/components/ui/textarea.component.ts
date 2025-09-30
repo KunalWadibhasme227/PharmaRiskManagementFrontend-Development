@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
       [class]="textareaClasses"
       [value]="value"
       [rows]="rows"
+      [maxLength]="maxLength"
+      [required]="required"
       (input)="onInputChange($event)"
       (blur)="onBlur.emit($event)"
       (focus)="onFocus.emit($event)">
@@ -56,6 +58,8 @@ export class TextareaComponent {
   @Input() value: string = '';
   @Input() rows: number = 3;
   @Input() className: string = '';
+  @Input() required: boolean = false;
+  @Input() maxLength: number = 10; // Default maxLength for textarea
   @Output() onBlur = new EventEmitter<Event>();
   @Output() onInput = new EventEmitter<Event>(); // Added this EventEmitter
   @Output() onFocus = new EventEmitter<Event>();
