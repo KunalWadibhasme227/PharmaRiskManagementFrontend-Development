@@ -102,6 +102,15 @@ import { CommonModule } from '@angular/common';
       padding: 0.5rem 2rem;
     }
     
+    .btn-cancel {
+       background-color: grey; 
+       color: white;   
+    }
+
+    .btn-cancel:hover {
+     background-color: darkgrey; 
+    }
+    
     .btn-icon {
       height: 2.5rem;
       width: 2.5rem;

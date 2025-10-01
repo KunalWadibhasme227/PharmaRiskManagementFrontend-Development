@@ -68,7 +68,7 @@ export interface ScheduleAuditFormData {
               <app-select-trigger 
                 placeholder="Select Supplier" 
                 [value]="formData.supplier"
-                className="form-select">
+                >
               </app-select-trigger>
               <app-select-content [isOpen]="supplierDropdownOpen">
                 <app-select-item 
@@ -87,8 +87,7 @@ export interface ScheduleAuditFormData {
             <app-select [value]="formData.auditor">
               <app-select-trigger 
                 placeholder="Select Auditor" 
-                [value]="formData.auditor"
-                className="form-select">
+                [value]="formData.auditor">
               </app-select-trigger>
               <app-select-content>
                 <app-select-item 
@@ -107,8 +106,7 @@ export interface ScheduleAuditFormData {
             <app-select [value]="formData.auditType">
               <app-select-trigger 
                 placeholder="Select Audit Type" 
-                [value]="formData.auditType"
-                className="form-select">
+                [value]="formData.auditType">
               </app-select-trigger>
               <app-select-content [isOpen]="auditTypeDropdownOpen">
                 <app-select-item 
@@ -128,8 +126,7 @@ export interface ScheduleAuditFormData {
               placeholder="Enter any additional comments or notes..."
               [value]="formData.comment"
               [rows]="4"
-              (onInput)="onCommentChange($event)"
-              className="form-textarea">
+              (onInput)="onCommentChange($event)">
             </app-textarea>
           </div>
         </div>
@@ -137,7 +134,7 @@ export interface ScheduleAuditFormData {
 
       <ng-container slot="footer">
         <app-button
-          variant="outline"
+          variant="secondary"
           (onClick)="onCloseModal()"
           className="cancel-button">
           Cancel
