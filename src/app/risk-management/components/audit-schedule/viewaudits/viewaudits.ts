@@ -13,9 +13,7 @@ import { RemainingDurationPipe } from '../../../models/remaining-duration.pipe';
 
 @Component({
   selector: 'app-viewaudits',
-  imports: [CommonModule,DashboardHeaderComponent, CardComponent, CardContentComponent, CardHeaderComponent,
-      CardTitleComponent, ButtonComponent, BadgeComponent, ScrollAreaComponent, SelectComponent, SelectTriggerComponent,
-          SelectContentComponent, SelectItemComponent, RemainingDurationPipe],
+  imports: [CommonModule,DashboardHeaderComponent, CardComponent, CardContentComponent, RemainingDurationPipe],
   templateUrl: './viewaudits.html',
   styleUrl: './viewaudits.scss'
 })

@@ -13,16 +13,8 @@ import { SupplierStateService } from '../../shared/services/suppliers/supplier-s
 
 @Component({
   selector: 'app-supplier-details',
-  imports: [CommonModule,DashboardHeaderComponent, CardComponent,
-      CardContentComponent,
-      CardHeaderComponent,
-      CardTitleComponent,
-      ButtonComponent,BadgeComponent,
-          ScrollAreaComponent,
-          SelectComponent,
-          SelectTriggerComponent,
-          SelectContentComponent,
-          SelectItemComponent],
+  imports: [CommonModule,DashboardHeaderComponent, CardComponent, CardContentComponent, ButtonComponent, BadgeComponent,
+          ],
   templateUrl: './supplier-details.component.html',
   styleUrl: './supplier-details.component.scss'
 })
