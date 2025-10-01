@@ -35,8 +35,7 @@ export interface Supplier {
   standalone: true,
   imports: [
     CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent,
-    ButtonComponent, InputComponent, BadgeComponent, ScrollAreaComponent, SelectComponent,
-    SelectTriggerComponent, SelectContentComponent, SelectItemComponent, FormsModule,
+    ButtonComponent, InputComponent, BadgeComponent, ScrollAreaComponent, FormsModule,
     MatFormFieldModule, MatSelectModule, MatDatepickerModule],
   templateUrl: './supplier-list.component.html',
   styleUrls: ['./supplier-list.component.scss']
@@ -102,7 +101,7 @@ states: any[] | null = [];
       const items = res ?? [];
       if (!Array.isArray(items) || items.length === 0) {
         this.cities = [];
-        this.notify.Error('No cities found for the selected state');
+        //this.notify.Error('No cities found for the selected state');
         return;
       }
       this.cities = items;
@@ -110,7 +109,7 @@ states: any[] | null = [];
     },
     error: (err) => {
       console.error('Failed to load cities', err);
-      this.notify.Error('Failed to load cities. Please try again later.');
+      //this.notify.Error('Failed to load cities. Please try again later.');
     }
   });
 }
@@ -213,7 +212,7 @@ fetchStates(): void {
     next: (res: any) => {
       const items = res ?? [];  
       if (!Array.isArray(items) || items.length === 0) {
-        this.notify.Error('No states found');
+        //this.notify.Error('No states found');
         return;
       }
       this.states = items;
@@ -222,7 +221,7 @@ fetchStates(): void {
   ,
     error: (err) => {
       console.error('Failed to load states', err);
-      this.notify.Error('Failed to load states. Please try again later.');
+      //this.notify.Error('Failed to load states. Please try again later.');
     }
   });
 }

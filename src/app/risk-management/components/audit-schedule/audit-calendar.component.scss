@@ -162,11 +162,11 @@
 }
 
 .legend-upcoming {
-  background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  background-color: oklch(0.627 0.265 70.08);
 }
 
 .legend-passed {
-  background-color: var(--primary);
+  background-color: oklch(0.567 0.175 199.228);
 }
 
 .legend-failed {
@@ -196,6 +196,50 @@
   color: var(--primary);
 }
 
+/* container row */
+.audit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* supplier left, badge right */
+  gap: 0.75rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+/* small text (supplier) */
+.audit-text {
+  font-size: 0.9rem;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* status pill */
+.status-badge {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+
+/* Completed (neutral/green/etc) */
+.status-badge.completed {
+  --sb-border: #0ab498;
+  /* gray */
+  --sb-text: #0a5a5a;
+  --sb-bg: #f8fafc;
+  color: var(--sb-text);
+  background-color: var(--sb-bg);
+  border: 1px solid var(--sb-border);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .calendar-header {
@@ -203,12 +247,12 @@
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .calendar-controls {
     width: 100%;
     justify-content: center;
   }
-  
+
   .calendar-summary {
     grid-template-columns: 1fr;
   }
@@ -218,13 +262,82 @@
   .calendar-day {
     height: 4rem;
   }
-  
+
   .calendar-day-empty {
     height: 4rem;
   }
-  
+
   .audit-item {
     font-size: 0.625rem;
     padding: 0.125rem;
   }
+}
+
+
+:host ::ng-deep .btn-primary {
+  background-color: oklch(0.567 0.175 199.228) !important;
+  border-color: oklch(0.567 0.175 199.228) !important;
+}
+
+:host ::ng-deep .btn-outline-primary {
+  color: oklch(0.567 0.175 199.228) !important;
+  border-color: oklch(0.567 0.175 199.228) !important;
+}
+
+:host ::ng-deep .btn-outline-primary.active,
+:host ::ng-deep .btn-outline-primary:hover {
+  background-color: oklch(0.567 0.175 199.228) !important;
+  color: #fff !important;
+}
+
+:host { display: block; }
+
+.calendar-wrapper {
+  padding: 10px;
+  min-height: 560px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+.btn btn-sm btn-outline-primary{
+  color: oklch(0.567 0.175 199.228);
+}
+
+/* ensure calendar view elements display correctly */
+.calendar-view,
+.mwl-calendar-month-view,
+.mwl-calendar-week-view,
+.mwl-calendar-day-view,
+.cal-month-view {
+  width: 100%;
+  display: block;
+}
+
+/* day cell sizing */
+.cal-day-cell, .cal-cell {
+  min-height: 80px;
+  padding: 6px;
+  vertical-align: top;
+}
+
+/* center header title */
+.calendar-title { margin: 0; font-weight: 600; text-align: center; }
+
+/* event chip style */
+.cal-event {
+  display: block;
+  padding: 2px 6px;
+  margin: 2px 0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+@media (max-width: 768px) {
+  .calendar-wrapper { min-height: 420px; }
+  .cal-day-cell, .cal-cell { min-height: 60px; }
 }

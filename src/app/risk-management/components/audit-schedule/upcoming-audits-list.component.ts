@@ -7,38 +7,33 @@ import { BadgeComponent } from '../ui/badge.component';
 import { ScrollAreaComponent } from '../ui/scroll-area.component';
 import { SelectComponent, SelectTriggerComponent, SelectContentComponent, SelectItemComponent } from '../ui/select.component';
 import { ScheduleAuditModalComponent, ScheduleAuditFormData } from './schedule-audit-modal.component';
+import { ScheduleAuditService } from '../../shared/services/scheduleaudit/schedule-audit.service';
+import { AuditRequestDto } from '../../models/supplier.model';
+import { Router } from '@angular/router';
+import { SupplierStateService } from '../../shared/services/suppliers/supplier-state.service';
+import { RemainingDurationPipe } from '../../models/remaining-duration.pipe';
+import { NotificationService } from '../../../shared/services/notification/notification.service';
+import { tap } from 'rxjs';
 
-export interface UpcomingAudit {
-  id: string;
-  supplier: string;
-  auditType: string;
-  date: string;
-  time: string;
-  duration: string;
-  status: "scheduled" | "confirmed" | "pending" | "in-progress";
-  auditor: string;
-  location: string;
-  priority: "high" | "medium" | "low";
-}
+// export interface UpcomingAudit {
+//   id: string;
+//   supplier: string;
+//   auditType: string;
+//   date: string;
+//   time: string;
+//   duration: string;
+//   status: "scheduled" | "confirmed" | "pending" | "in-progress";
+//   auditor: string;
+//   location: string;
+//   priority: "high" | "medium" | "low";
+// }
 
 @Component({
   selector: 'app-upcoming-audits-list',
   standalone: true,
   imports: [
-    CommonModule,
-    CardComponent,
-    CardContentComponent,
-    CardHeaderComponent,
-    CardTitleComponent,
-    ButtonComponent,
-    InputComponent,
-    BadgeComponent,
-    ScrollAreaComponent,
-    SelectComponent,
-    SelectTriggerComponent,
-    SelectContentComponent,
-    SelectItemComponent,
-    ScheduleAuditModalComponent
+    CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent, ButtonComponent,
+    InputComponent, BadgeComponent, ScrollAreaComponent, ScheduleAuditModalComponent, RemainingDurationPipe 
   ],
   templateUrl: './upcoming-audits-list.component.html',
   styleUrls: ['./upcoming-audits-list.component.scss']
@@ -47,141 +42,82 @@ export class UpcomingAuditsListComponent {
   searchTerm = '';
   filterStatus = 'all';
   isScheduleModalOpen = false;
+pageNumber = 1;
+  pageSize = 5;
+  totalRecords = 0;
+  loading = false;
+  auditdetailbyId: any;
 
-  upcomingAudits: UpcomingAudit[] = [
-    {
-      id: "1",
-      supplier: "PharmaCorp Ltd",
-      auditType: "GMP Audit",
-      date: "2025-01-15",
-      time: "09:00 AM",
-      duration: "4 hours",
-      status: "confirmed",
-      auditor: "Sarah Johnson",
-      location: "Boston, MA",
-      priority: "high",
-    },
-    {
-      id: "2",
-      supplier: "MedTech Solutions",
-      auditType: "Quality Audit",
-      date: "2025-01-18",
-      time: "10:30 AM",
-      duration: "6 hours",
-      status: "scheduled",
-      auditor: "Michael Chen",
-      location: "Chicago, IL",
-      priority: "medium",
-    },
-    {
-      id: "3",
-      supplier: "BioSupply Corp",
-      auditType: "Compliance Audit",
-      date: "2025-01-22",
-      time: "02:00 PM",
-      duration: "3 hours",
-      status: "pending",
-      auditor: "Emily Davis",
-      location: "San Diego, CA",
-      priority: "low",
-    },
-    {
-      id: "4",
-      supplier: "GlobalMed Corp",
-      auditType: "FDA Inspection",
-      date: "2025-01-25",
-      time: "08:00 AM",
-      duration: "8 hours",
-      status: "confirmed",
-      auditor: "Robert Wilson",
-      location: "New York, NY",
-      priority: "high",
-    },
-    {
-      id: "5",
-      supplier: "ChemSource Ltd",
-      auditType: "ISO Audit",
-      date: "2025-01-28",
-      time: "01:00 PM",
-      duration: "5 hours",
-      status: "scheduled",
-      auditor: "Lisa Anderson",
-      location: "Houston, TX",
-      priority: "medium",
-    },
-  ];
+  constructor(private auditService : ScheduleAuditService,private router: Router, private supplierState : SupplierStateService,
+    private notify: NotificationService
+  ) {
 
-  get filteredAudits(): UpcomingAudit[] {
-    return this.upcomingAudits.filter((audit) => {
-      const matchesSearch =
-        audit.supplier.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        audit.auditType.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        audit.auditor.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesStatus = this.filterStatus === "all" || audit.status === this.filterStatus;
-      return matchesSearch && matchesStatus;
+        this.getAudits();
+
+  }
+  
+upcomingAudits: any[] = [];
+
+  ngOnInit(): void {
+  }
+  private buildAuditRequestDto(): AuditRequestDto {
+    return {
+      statusId: 1,
+      searchText: this.searchTerm || '',
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize
+    };
+  }
+  getAudits(){
+    const filter = this.buildAuditRequestDto();
+    this.auditService.getScheduledAudits(filter).subscribe({
+      next: (res : any) => {
+        this.upcomingAudits = res.records;
+        this.totalRecords = res?.totalCount ?? 0;
+        console.log(res);
+      },
+      error: (err : any) => {
+        console.log(err);
+        this.upcomingAudits = [];
+        this.totalRecords = 0;
+      this.pageNumber = 1;
+      this.pageSize = 5;
+      }
     });
   }
-
-  getStatusBadgeVariant(status: UpcomingAudit["status"]): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
-    switch (status) {
-      case "confirmed":
-        return "primary";
-      case "scheduled":
-        return "outline";
-      case "pending":
-        return "accent";
-      case "in-progress":
-        return "secondary";
-      default:
-        return "default";
-    }
+  
+  getStatusBadgeVariant(status: number): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
+  switch (status) {
+    case 1: // Pending
+      return "accent";
+    case 2: // Completed
+      return "primary";
+    default:
+      return "default";
   }
+}
 
-  getStatusBadgeText(status: UpcomingAudit["status"]): string {
-    switch (status) {
-      case "confirmed":
-        return "Confirmed";
-      case "scheduled":
-        return "Scheduled";
-      case "pending":
-        return "Pending";
-      case "in-progress":
-        return "In Progress";
-      default:
-        return "";
-    }
+getStatusBadgeText(status: number): string {
+  switch (status) {
+    case 1:
+      return "Pending";
+    case 2:
+      return "Completed";
+    default:
+      return "---";
   }
+}
 
-  getPriorityBadgeVariant(priority: UpcomingAudit["priority"]): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
-    switch (priority) {
-      case "high":
-        return "destructive";
-      case "medium":
-        return "accent";
-      case "low":
-        return "primary";
-      default:
-        return "default";
-    }
-  }
-
-  getPriorityBadgeText(priority: UpcomingAudit["priority"]): string {
-    switch (priority) {
-      case "high":
-        return "High Priority";
-      case "medium":
-        return "Medium Priority";
-      case "low":
-        return "Low Priority";
-      default:
-        return "";
-    }
-  }
 
   onSearchChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchTerm = target.value;
-  }
+  const target = event.target as HTMLInputElement;
+  this.searchTerm = target.value;
+  if(this.searchTerm.length>=3)
+  { this.getAudits();}
+  if(this.searchTerm.length==0)
+  { this.getAudits();}
+}
+
 
   onFilterChange(filterStatus: string): void {
     this.filterStatus = filterStatus;
@@ -193,6 +129,8 @@ export class UpcomingAuditsListComponent {
 
   onScheduleModalClose(): void {
     this.isScheduleModalOpen = false;
+    this.auditdetailbyId = undefined;
+    this.getAudits();
   }
 
   onScheduleModalSubmit(formData: ScheduleAuditFormData): void {
@@ -200,23 +138,93 @@ export class UpcomingAuditsListComponent {
     // Handle schedule audit logic here
     // For now, we'll just close the modal
     this.isScheduleModalOpen = false;
+    this.getAudits();
   }
 
-  onViewDetails(audit: UpcomingAudit): void {
-    console.log('Viewing details for:', audit.supplier);
-    // Handle view details logic here
+  onViewDetails(audit: any): void {
+  this.supplierState.setSupplier(audit);
+  this.router.navigate(['/audits/view']);
+}
+
+ onReschedule(audit: any): void {
+  if (!audit) return;
+
+  this.auditService.getAuditById(audit.auditId).pipe(
+    tap((res: any) => this.auditdetailbyId = res)
+  ).subscribe({
+    next: () => {
+      this.supplierState.setSupplier(this.auditdetailbyId);
+      this.isScheduleModalOpen = true;
+      console.log('Rescheduling audit for:', this.auditdetailbyId);
+    },
+    error: () => {
+      this.notify.Error('Failed to fetch audit details');
+    }
+  });
+}
+
+
+  prevPage() {
+  if (this.pageNumber > 1) {
+    this.pageNumber--;
+    this.getAudits();
+  }
+}
+
+nextPage() {
+  if (this.pageNumber * this.pageSize < this.totalRecords) {
+    this.pageNumber++;
+    this.getAudits();
+  }
+}
+canGoPrev(): boolean {
+  return this.pageNumber > 1;
+}
+
+canGoNext(): boolean {
+  return this.pageNumber * this.pageSize < this.totalRecords;
+}
+get totalPages(): number {
+  return this.totalRecords > 0 ? Math.ceil(this.totalRecords / this.pageSize) : 1;
+}
+  getFormattedDateTime(isoString: string): string {
+  const dateObj = new Date(isoString);
+
+  const optionsDate: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+  const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+
+  const formattedDate = dateObj.toLocaleDateString('en-US', optionsDate);
+  const formattedTime = dateObj.toLocaleTimeString('en-US', optionsTime);
+
+  return `${formattedDate} at ${formattedTime}`;
+}
+
+getRemainingDuration(isoString: string): string {
+  const now = new Date();
+  const target = new Date(isoString);
+
+  let diffMs = target.getTime() - now.getTime(); // difference in ms
+
+  if (diffMs <= 0) {
+    return 'Expired'; // already passed
   }
 
-  onReschedule(audit: UpcomingAudit): void {
-    console.log('Rescheduling audit for:', audit.supplier);
-    // Handle reschedule logic here
-  }
+  const diffMinutes = Math.floor(diffMs / (1000 * 60)) % 60;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  getFormattedDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString();
+  if (diffDays > 0) {
+    return `${diffDays}d ${diffHours}h ${diffMinutes}m remaining`;
+  } else if (diffHours > 0) {
+    return `${diffHours}h ${diffMinutes}m remaining`;
+  } else {
+    return `${diffMinutes}m remaining`;
   }
+}
 
-  trackByAuditId(index: number, audit: UpcomingAudit): string {
-    return audit.id;
-  }
+
+  // trackByAuditId(index: number, audit: UpcomingAudit): string {
+  //   return audit.id;
+  // }
+
 }

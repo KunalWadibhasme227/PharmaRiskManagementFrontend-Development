@@ -1,179 +1,172 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../ui/card.component';
 import { ButtonComponent } from '../ui/button.component';
+import { ScheduleAuditService } from '../../shared/services/scheduleaudit/schedule-audit.service';
+import { AuditRequestDto } from '../../models/supplier.model';
+import { CalendarEvent, CalendarEventAction, CalendarView, CalendarModule } from 'angular-calendar';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { provideCalendar, CalendarMonthViewComponent, CalendarWeekViewComponent, CalendarDayViewComponent, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
 
 export interface CalendarAudit {
-  id: string;
-  supplier: string;
-  auditType: string;
-  date: string;
-  time: string;
-  status: "upcoming" | "completed";
-  result?: "passed" | "passed-with-conditions" | "failed";
+  auditId: string;
+  supplierId: number | string;
+  auditTypeName: string;
+  auditDate: string;
+  statusId: number;
+  score?: number;
 }
+
+const colors = {
+  red: { primary: 'oklch(0.627 0.265 70.08)', secondary: '#FAE3E3' },
+  yellow: { primary: 'oklch(0.567 0.175 199.228)', secondary: '#FDF1BA' },
+  blue: { primary: 'oklch(0.567 0.175 199.228)', secondary: '#D1E8FF' },
+};
 
 @Component({
   selector: 'app-audit-calendar',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
-    CardComponent,
-    CardContentComponent,
-    CardHeaderComponent,
-    CardTitleComponent,
-    ButtonComponent
+    CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent, FormsModule,
+    NgbModule, CalendarModule, CalendarMonthViewComponent, CalendarWeekViewComponent, CalendarDayViewComponent
+  ],
+  providers: [
+    provideCalendar({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   templateUrl: './audit-calendar.component.html',
   styleUrls: ['./audit-calendar.component.scss']
 })
 export class AuditCalendarComponent {
   currentDate = new Date();
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
-  calendarAudits: CalendarAudit[] = [
+  CalendarView = CalendarView;
+  view: CalendarView = CalendarView.Month;
+  viewDate: Date = new Date();
+  activeDayIsOpen = true;
+  refresh = new Subject<void>();
+
+  modalData?: { action?: string; event: CalendarEvent };
+  events: CalendarEvent[] = [];
+  private modal = inject(NgbModal);
+  countupcoming: number = 0;
+  countcompleted: number = 0;
+
+  actions: CalendarEventAction[] = [
     {
-      id: "1",
-      supplier: "PharmaCorp Ltd",
-      auditType: "GMP Audit",
-      date: "2025-01-15",
-      time: "09:00 AM",
-      status: "upcoming",
+      label: '<i class="fas fa-pencil-alt"></i>',
+      onClick: ({ event }: { event: CalendarEvent }) => this.handleEvent('Edited', event)
     },
     {
-      id: "2",
-      supplier: "MedTech Solutions",
-      auditType: "Quality Audit",
-      date: "2025-01-18",
-      time: "10:30 AM",
-      status: "upcoming",
-    },
-    {
-      id: "3",
-      supplier: "BioSupply Corp",
-      auditType: "Compliance Audit",
-      date: "2025-01-22",
-      time: "02:00 PM",
-      status: "upcoming",
-    },
-    {
-      id: "4",
-      supplier: "PharmaCorp Ltd",
-      auditType: "GMP Audit",
-      date: "2024-12-15",
-      time: "09:00 AM",
-      status: "completed",
-      result: "passed",
-    },
-    {
-      id: "5",
-      supplier: "MedSupply Inc",
-      auditType: "Compliance Audit",
-      date: "2024-12-05",
-      time: "01:00 PM",
-      status: "completed",
-      result: "failed",
-    },
-  ];
-
-  monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-
-  get currentMonth(): number {
-    return this.currentDate.getMonth();
-  }
-
-  get currentYear(): number {
-    return this.currentDate.getFullYear();
-  }
-
-  get firstDayOfMonth(): Date {
-    return new Date(this.currentYear, this.currentMonth, 1);
-  }
-
-  get lastDayOfMonth(): Date {
-    return new Date(this.currentYear, this.currentMonth + 1, 0);
-  }
-
-  get firstDayWeekday(): number {
-    return this.firstDayOfMonth.getDay();
-  }
-
-  get daysInMonth(): number {
-    return this.lastDayOfMonth.getDate();
-  }
-
-  getStatusBadgeVariant(audit: CalendarAudit): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
-    if (audit.status === "upcoming") {
-      return "outline";
-    } else {
-      switch (audit.result) {
-        case "passed":
-          return "primary";
-        case "passed-with-conditions":
-          return "accent";
-        case "failed":
-          return "destructive";
-        default:
-          return "secondary";
+      label: '<i class="fas fa-trash-alt"></i>',
+      onClick: ({ event }: { event: CalendarEvent }) => {
+        this.events = this.events.filter(iEvent => iEvent !== event);
+        this.handleEvent('Deleted', event);
       }
     }
+  ];
+
+  calendarAudits: CalendarAudit[] = [];
+
+  constructor(private auditService: ScheduleAuditService) {
+    this.getAudits();
   }
 
-  getStatusBadgeText(audit: CalendarAudit): string {
-    if (audit.status === "upcoming") {
-      return "Upcoming";
-    } else {
-      switch (audit.result) {
-        case "passed":
-          return "Passed";
-        case "passed-with-conditions":
-          return "Conditional";
-        case "failed":
-          return "Failed";
-        default:
-          return "Completed";
+  private buildAuditRequestDto(): AuditRequestDto {
+    return { statusId: 0, searchText: '', pageNumber: 1, pageSize: 10000 };
+  }
+
+  getAudits() {
+    const filter = this.buildAuditRequestDto();
+    this.auditService.getScheduledAudits(filter).subscribe({
+      next: (res: any) => {
+        this.calendarAudits = Array.isArray(res?.records) ? res.records : [];
+        this.loadAudits(this.calendarAudits);
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.calendarAudits = [];
+        this.loadAudits([]);
       }
+    });
+  }
+
+  loadAudits(calendarAudits: CalendarAudit[]) {
+    this.events = calendarAudits.map(audit => {
+      const startDate = new Date(audit.auditDate);
+      const endDate = new Date(startDate.getTime() + (2 * 60 * 1000)); // 2 hour duration
+      if (this.currentMonth === startDate.getMonth()) {
+        if (audit.statusId === 1) {
+          this.countupcoming++;
+        }
+        else {
+          this.countcompleted++;
+        }
+      }
+      return {
+        start: startDate,
+        end: endDate,
+        title: `${audit.auditTypeName} - Supplier: ${audit.supplierId}`,
+        color: this.getEventColor(audit.statusId),
+        allDay: false,
+        meta: audit
+      };
+    });
+    this.refresh.next();
+  }
+
+  getEventColor(statusId: number) {
+    switch (statusId) {
+      case 1: return colors.red;
+      case 2: return colors.yellow;
+      case 3: return colors.blue;
+      default: return colors.blue;
     }
   }
 
-  previousMonth(): void {
-    this.currentDate = new Date(this.currentYear, this.currentMonth - 1, 1);
-  }
+  handleEvent(actionOrEvent: string | CalendarEvent, maybeEvent?: CalendarEvent) {
+    let action: string | undefined;
+    let event: CalendarEvent | undefined;
 
-  nextMonth(): void {
-    this.currentDate = new Date(this.currentYear, this.currentMonth + 1, 1);
-  }
-
-  getAuditsForDate(day: number): CalendarAudit[] {
-    const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return this.calendarAudits.filter((audit) => audit.date === dateStr);
-  }
-
-  getCalendarDays(): Array<{ day: number; audits: CalendarAudit[] } | null> {
-    const days = [];
-
-    // Empty cells for days before the first day of the month
-    for (let i = 0; i < this.firstDayWeekday; i++) {
-      days.push(null);
+    if (typeof actionOrEvent === 'string') {
+      action = actionOrEvent;
+      event = maybeEvent;
+    } else {
+      action = 'Clicked';
+      event = actionOrEvent;
     }
 
-    // Days of the month
-    for (let day = 1; day <= this.daysInMonth; day++) {
-      const auditsForDay = this.getAuditsForDate(day);
-      days.push({ day, audits: auditsForDay });
+    if (!event) return;
+
+    this.modalData = { action, event };
+    this.modal.open(this.modalContent, { size: 'lg' });
+  }
+
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }) {
+    if (date.getMonth() === this.viewDate.getMonth()) {
+      this.activeDayIsOpen = !(this.viewDate.getDate() === date.getDate() && this.activeDayIsOpen) && events.length > 0;
+      this.viewDate = date;
     }
-
-    return days;
   }
 
-  onAuditClick(audit: CalendarAudit): void {
-    console.log('Audit clicked:', audit.supplier);
-    // Handle audit click logic here
-  }
+  setView(view: CalendarView) { this.view = view; }
+  closeOpenMonthViewDay() { this.activeDayIsOpen = false; }
 
-  trackByAuditId(index: number, audit: CalendarAudit): string {
-    return audit.id;
-  }
+  get currentMonth(): number { return this.currentDate.getMonth(); }
+  get currentYear(): number { return this.currentDate.getFullYear(); }
+  get firstDayOfMonth(): Date { return new Date(this.currentYear, this.currentMonth, 1); }
+  get lastDayOfMonth(): Date { return new Date(this.currentYear, this.currentMonth + 1, 0); }
+  get firstDayWeekday(): number { return this.firstDayOfMonth.getDay(); }
+  get daysInMonth(): number { return this.lastDayOfMonth.getDate(); }
+
+  previousMonth(): void { this.currentDate = new Date(this.currentYear, this.currentMonth - 1, 1); }
+  nextMonth(): void { this.currentDate = new Date(this.currentYear, this.currentMonth + 1, 1); }
+
+  getAuditClass(audit: CalendarAudit): string { return audit.statusId === 1 ? 'audit-pending' : 'audit-completed'; }
+  getAuditDotClass(audit: CalendarAudit): string { return audit.statusId === 1 ? 'dot-pending' : 'dot-completed'; }
+  onAuditClick(audit: CalendarAudit): void { console.log('Audit clicked:', audit.supplierId); }
 }
