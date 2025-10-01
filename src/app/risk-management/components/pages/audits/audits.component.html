@@ -1,7 +1,6 @@
 <div class="audits-page">
   <div class="audits-content">
-    <app-dashboard-header
-      title="Audit Schedule"
+    <app-dashboard-header title="Audit Schedule"
       subtitle="Module to schedule and manage supplier audits and inspections">
     </app-dashboard-header>
 
@@ -9,27 +8,18 @@
       <!-- Main Content Tabs -->
       <app-tabs [defaultValue]="activeTab" className="main-tabs">
         <app-tabs-list className="tabs-list-3">
-          <app-tabs-trigger
-            value="upcoming"
-            [isActive]="activeTab === 'upcoming'"
-            (click)="onTabChange('upcoming')">
+          <app-tabs-trigger value="upcoming" [isActive]="activeTab === 'upcoming'" (click)="onTabChange('upcoming')">
             Upcoming Audits
           </app-tabs-trigger>
-          <app-tabs-trigger
-            value="completed"
-            [isActive]="activeTab === 'completed'"
-            (click)="onTabChange('completed')">
+          <app-tabs-trigger value="completed" [isActive]="activeTab === 'completed'" (click)="onTabChange('completed')">
             Completed Audits
           </app-tabs-trigger>
-          <app-tabs-trigger
-            value="calendar"
-            [isActive]="activeTab === 'calendar'"
-            (click)="onTabChange('calendar')">
+          <app-tabs-trigger value="calendar" [isActive]="activeTab === 'calendar'" (click)="onTabChange('calendar')">
             Calendar View
           </app-tabs-trigger>
         </app-tabs-list>
 
-        <app-tabs-content
+        <!-- <app-tabs-content
           value="upcoming"
           [isActive]="activeTab === 'upcoming'"
           className="tabs-content-space">
@@ -48,7 +38,19 @@
           [isActive]="activeTab === 'calendar'"
           className="tabs-content-space">
           <app-audit-calendar></app-audit-calendar>
+        </app-tabs-content> -->
+        <app-tabs-content value="upcoming" [isActive]="activeTab === 'upcoming'" className="tabs-content-space">
+          <app-upcoming-audits-list *ngIf="activeTab === 'upcoming'"></app-upcoming-audits-list>
         </app-tabs-content>
+
+        <app-tabs-content value="completed" [isActive]="activeTab === 'completed'" className="tabs-content-space">
+          <app-completed-audits-list *ngIf="activeTab === 'completed'"></app-completed-audits-list>
+        </app-tabs-content>
+
+        <app-tabs-content value="calendar" [isActive]="activeTab === 'calendar'" className="tabs-content-space">
+          <app-audit-calendar *ngIf="activeTab === 'calendar'"></app-audit-calendar>
+        </app-tabs-content>
+
       </app-tabs>
     </main>
   </div>

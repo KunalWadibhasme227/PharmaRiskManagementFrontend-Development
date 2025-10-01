@@ -239,6 +239,9 @@ export class ScheduleAuditModalComponent {
   currentdate: string = new Date().toISOString().split('T')[0]; // "2025-09-25"
   audit?: any;
   editMode: boolean = false;
+  minTime: string | null = '';
+  istimevalid: boolean = false;
+
 
   // Store selected objects for display purposes
   selectedSupplier: any = null;
@@ -247,7 +250,7 @@ export class ScheduleAuditModalComponent {
 
   constructor(
     private scheduleAuditService: ScheduleAuditService, private notify: NotificationService,
-    private supplierService: SupplierService, private supplierState: SupplierStateService, private auditService : ScheduleAuditService
+    private supplierService: SupplierService, private supplierState: SupplierStateService, private auditService: ScheduleAuditService
   ) {
     this.fetchAuditors();
     this.fetchSuppliers();
@@ -257,7 +260,7 @@ export class ScheduleAuditModalComponent {
   ngOnChanges(): void {
     this.audit = this.supplierState.getCurrentSupplier();
     console.log("Received audit for editing:", this.audit);
-    if(this.audit){
+    if (this.audit) {
       this.editMode = true;
       this.patchAuditData();
     }
@@ -315,7 +318,7 @@ export class ScheduleAuditModalComponent {
   fetchAuditTypes() {
     this.scheduleAuditService.getAuditTypes().subscribe({
       next: (res: any) => {
-        console.log('Raw audit types response:', res);
+        //console.log('Raw audit types response:', res);
         const data = res ?? [];
 
         if (!Array.isArray(data)) {
@@ -325,7 +328,7 @@ export class ScheduleAuditModalComponent {
             this.auditTypes = actualData;
           } else {
             this.auditTypes = [];
-            this.notify.Error('Invalid audit types data format');
+            //this.notify.Error('Invalid audit types data format');
             return;
           }
         } else {
@@ -392,7 +395,6 @@ export class ScheduleAuditModalComponent {
           return;
         }
 
-        // Store the supplier objects directly
         this.suppliers = items;
         console.log('Processed suppliers:', this.suppliers);
       },
@@ -410,7 +412,7 @@ export class ScheduleAuditModalComponent {
     this.formData = {
       auditId: this.audit.auditId || '',
       date: this.audit.auditDate ? this.audit.auditDate.split("T")[0] : '',
-      time: this.audit.auditDate ? new Date(this.audit.auditDate).toISOString().substring(11, 16) : '',
+      time: this.audit.auditDate ? this.formatTime(new Date(this.audit.auditDate)): '',
       supplier: this.audit.supplierId || '',
       auditor: this.audit.leadAuditor || '',
       auditType: this.audit.auditType || '',
@@ -422,6 +424,11 @@ export class ScheduleAuditModalComponent {
     this.selectedAuditor = this.auditors.find(a => a.auditorId === this.audit.leadAuditor) || null;
     this.selectedAuditorType = this.auditTypes.find(t => t.auditTypeId === this.audit.auditType) || null;
   }
+formatTime(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, '0');   // local hours
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
 
   // Dropdown toggle methods
   toggleSupplierDropdown(event?: Event): void {
@@ -461,17 +468,6 @@ export class ScheduleAuditModalComponent {
     this.auditTypeDropdownOpen = false;
   }
 
-  get minTime(): string | null {
-    const today = new Date();
-  const selectedDate = new Date(this.formData.date);
-
-  if (selectedDate.toDateString() === today.toDateString()) {
-    // Format "HH:mm" from current time
-    return today.toISOString().substring(11, 16);
-  }
-  return null
-}
-  // Get display names for selected items
   getSelectedSupplierName(): string {
     if (!this.selectedSupplier) return '';
     return this.selectedSupplier.companyName;
@@ -489,22 +485,53 @@ export class ScheduleAuditModalComponent {
 
   // Event handlers
   onDateChange(event: Event): void {
+
     const target = event.target as HTMLInputElement;
     this.formData.date = target.value;
-     if (this.formData.time) {
-    const selectedDateTime = new Date(`${this.formData.date}T${this.formData.time}`);
-    const now = new Date();
+    console.log("FormatDates : ", this.formData.date);
 
-    if (selectedDateTime < now) {
-      // Force to current time if invalid
-      this.formData.time = '';
+    if (this.formData.time) {
+
+      const selectedDateTime = new Date(`${this.formData.date}T${this.formData.time}`);
+      const now = new Date();
+
+      if (selectedDateTime < now) {
+        this.formData.time = '';
+      }
     }
-  }
   }
 
   onTimeChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.formData.time = target.value;
+
+    const today = new Date();
+    const selectedDate = new Date(this.formData.date);
+
+    const isToday = selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() === today.getMonth() &&
+      selectedDate.getDate() === today.getDate();
+
+    if (isToday) {
+      // Parse AM/PM time to 24h Date
+      const [time, modifier] = target.value.split(" "); // "03:15", "PM"
+      let [hours, minutes] = time.split(":").map(Number);
+
+      if (modifier === "PM" && hours < 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
+
+      const selectedTime = new Date(selectedDate);
+      selectedTime.setHours(hours, minutes, 0, 0);
+
+      if (selectedTime < today) {
+        this.istimevalid = false;
+        this.notify.Warning("Please select a valid future time");
+        this.formData.time = '';
+      }
+      else {
+        this.istimevalid = true;
+      }
+    }
   }
 
   onSupplierChange(supplier: any): void {
@@ -536,7 +563,7 @@ export class ScheduleAuditModalComponent {
   onCloseModal(): void {
     this.audit = undefined;
     this.editMode = false;
-    this.supplierState.clearCurrentSupplier(); 
+    this.supplierState.clearCurrentSupplier();
     this.resetForm();
     this.onClose.emit();
   }
@@ -551,60 +578,60 @@ export class ScheduleAuditModalComponent {
     return utcDateTime.toISOString();
   }
   onSubmitForm(): void {
-  if (!this.isFormValid()) {
-    this.notify.Error('Please fill in all required fields');
-    return;
-  }
+    if (!this.isFormValid() && !this.istimevalid) {
+      this.notify.Error('Please fill in all required fields');
+      return;
+    }
 
-  const utcDateTime = this.combineDateTimeToUTC(this.formData.date, this.formData.time);
+    const utcDateTime = this.combineDateTimeToUTC(this.formData.date, this.formData.time);
 
-  const submissionData = {
-    auditId :this.formData.auditId,
-    supplierId: this.formData.supplier,
-    auditDate: utcDateTime, // e.g. "2025-09-25T06:19:00.000Z"
-    auditType: this.formData.auditType,
-    leadAuditor: this.formData.auditor,
-    score: null,
-    statusId: 1,
-    comment: this.formData.comment
-  };
+    const submissionData = {
+      auditId: this.formData.auditId,
+      supplierId: this.formData.supplier,
+      auditDate: utcDateTime, // e.g. "2025-09-25T06:19:00.000Z"
+      auditType: this.formData.auditType,
+      leadAuditor: this.formData.auditor,
+      score: null,
+      statusId: 1,
+      comment: this.formData.comment
+    };
 
-  if (this.editMode) {
-    // 🔹 Update existing audit
-    this.scheduleAuditService.updateAudit(this.audit.auditId, submissionData).subscribe({
-      next: (res: any) => {
-        if (!res || res.error) {
-          const errorMsg = res?.error?.message || 'Failed to update audit. Please try again later.';
-          this.notify.Error(errorMsg);
-          return;
+    if (this.editMode) {
+      //  Update existing audit
+      this.scheduleAuditService.updateAudit(this.audit.auditId, submissionData).subscribe({
+        next: (res: any) => {
+          if (!res || res.error) {
+            const errorMsg = res?.error?.message || 'Failed to update audit. Please try again later.';
+            this.notify.Error(errorMsg);
+            return;
+          }
+          this.notify.Success('Audit updated successfully');
+          this.onCloseModal();
+        },
+        error: (err: any) => {
+          console.error('Error updating audit:', err);
+          this.notify.Error('Failed to update audit. Please try again later.');
         }
-        this.notify.Success('Audit updated successfully');
-        this.onCloseModal();
-      },
-      error: (err: any) => {
-        console.error('Error updating audit:', err);
-        this.notify.Error('Failed to update audit. Please try again later.');
-      }
-    });
-  } else {
-    // 🔹 Create new audit
-    this.scheduleAuditService.scheduleAudit(submissionData).subscribe({
-      next: (res: any) => {
-        if (!res || res.error) {
-          const errorMsg = res?.error?.message || 'Failed to schedule audit. Please try again later.';
-          this.notify.Error(errorMsg);
-          return;
+      });
+    } else {
+      //  Create new audit
+      this.scheduleAuditService.scheduleAudit(submissionData).subscribe({
+        next: (res: any) => {
+          if (!res || res.error) {
+            const errorMsg = res?.error?.message || 'Failed to schedule audit. Please try again later.';
+            this.notify.Error(errorMsg);
+            return;
+          }
+          this.notify.Success('Audit scheduled successfully');
+          this.onCloseModal();
+        },
+        error: (err: any) => {
+          console.error('Error scheduling audit:', err);
+          this.notify.Error('Failed to schedule audit. Please try again later.');
         }
-        this.notify.Success('Audit scheduled successfully');
-        this.onCloseModal();
-      },
-      error: (err: any) => {
-        console.error('Error scheduling audit:', err);
-        this.notify.Error('Failed to schedule audit. Please try again later.');
-      }
-    });
+      });
+    }
   }
-}
 
 
 

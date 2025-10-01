@@ -33,8 +33,7 @@ import { tap } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent, ButtonComponent,
-    InputComponent, BadgeComponent, ScrollAreaComponent, SelectComponent, SelectTriggerComponent, SelectContentComponent,
-    SelectItemComponent, ScheduleAuditModalComponent, RemainingDurationPipe 
+    InputComponent, BadgeComponent, ScrollAreaComponent, ScheduleAuditModalComponent, RemainingDurationPipe 
   ],
   templateUrl: './upcoming-audits-list.component.html',
   styleUrls: ['./upcoming-audits-list.component.scss']

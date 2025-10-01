@@ -1,52 +1,6 @@
 <div class="audit-calendar-section">
-  <!-- Calendar Header -->
   <app-card>
-    <!-- <app-card-header>
-      <div class="calendar-header">
-        <app-card-title className="calendar-title">
-          <span class="calendar-icon">📅</span>
-          <span>Audit Calendar</span>
-        </app-card-title>
-        <div class="calendar-controls">
-          <app-button variant="outline" size="sm" (onClick)="previousMonth()" className="calendar-nav-button">
-            <span class="nav-icon">◀</span>
-          </app-button>
-          <span class="calendar-month">
-            {{ monthNames[currentMonth] }} {{ currentYear }}
-          </span>
-          <app-button variant="outline" size="sm" (onClick)="nextMonth()" className="calendar-nav-button">
-            <span class="nav-icon">▶</span>
-          </app-button>
-        </div>
-      </div>
-    </app-card-header>
-    <app-card-content>
-      <div class="calendar-grid">
-        <div *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" class="calendar-day-header">
-          {{ day }}
-        </div>
-        <div *ngFor="let dayData of getCalendarDays(); let i = index"
-          [class]="dayData ? 'calendar-day' : 'calendar-day-empty'">
-          <div *ngIf="dayData" class="day-content">
-            <div class="day-number">{{ dayData.day }}</div>
-            <div class="day-audits">
-              
-              <div *ngFor="let audit of dayData.audits.slice(0, 2); trackBy: trackByAuditId" class="status-badge" [ngClass]="audit.statusId === 1 ? 'pending' : 'completed'"
-                (click)="onAuditClick(audit)"
-                [title]="audit.supplierId + ' - ' + audit.auditTypeName + ' at ' + getFormattedDateTime(audit.auditDate)">
-                <span class="status-badge">{{ audit.supplierId + getFormattedDateTime(audit.auditDate) }}</span>
-            </div>
-              <div *ngIf="dayData.audits.length > 2" class="more-audits">
-                +{{ dayData.audits.length - 2 }} more
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </app-card-content> -->
-    <!-- src/app/calendar/calendar.component.html -->
-
-<div class="audit-calendar-section">
+  <div class="audit-calendar-section">
   <app-card>
     <div class="row align-items-center mb-2">
       <div class="col-md-4">

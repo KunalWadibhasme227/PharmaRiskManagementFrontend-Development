@@ -31,18 +31,8 @@ const colors = {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
-    CardComponent,
-    CardContentComponent,
-    CardHeaderComponent,
-    CardTitleComponent,
-    ButtonComponent,
-    FormsModule,
-    NgbModule,
-    CalendarModule, // <-- provides directives and pipes
-    CalendarMonthViewComponent,
-    CalendarWeekViewComponent,
-    CalendarDayViewComponent
+    CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent, FormsModule,
+    NgbModule, CalendarModule, CalendarMonthViewComponent, CalendarWeekViewComponent, CalendarDayViewComponent
   ],
   providers: [
     provideCalendar({ provide: DateAdapter, useFactory: adapterFactory })
@@ -105,40 +95,29 @@ export class AuditCalendarComponent {
     });
   }
 
-  // loadAudits(calendarAudits: CalendarAudit[]) {
-  //   this.events = calendarAudits.map(audit => ({
-  //     start: new Date(audit.auditDate),
-  //     end: new Date(audit.auditDate),
-  //     title: `${audit.auditTypeName} - Supplier: ${audit.supplierId}`,
-  //     color: this.getEventColor(audit.statusId),
-  //     allDay: true,
-  //     meta: audit
-  //   }));
-  //   this.refresh.next();
-  // }
   loadAudits(calendarAudits: CalendarAudit[]) {
-  this.events = calendarAudits.map(audit => {
-    const startDate = new Date(audit.auditDate);
-    const endDate = new Date(startDate.getTime() + (2 * 60 * 1000)); // 2 hour duration
-    if(this.currentMonth === startDate.getMonth()){
-      if(audit.statusId === 1){
-        this.countupcoming++;
+    this.events = calendarAudits.map(audit => {
+      const startDate = new Date(audit.auditDate);
+      const endDate = new Date(startDate.getTime() + (2 * 60 * 1000)); // 2 hour duration
+      if (this.currentMonth === startDate.getMonth()) {
+        if (audit.statusId === 1) {
+          this.countupcoming++;
+        }
+        else {
+          this.countcompleted++;
+        }
       }
-      else{
-        this.countcompleted++;
-      }
-    }
-    return {
-      start: startDate,
-      end: endDate,
-      title: `${audit.auditTypeName} - Supplier: ${audit.supplierId}`,
-      color: this.getEventColor(audit.statusId),
-      allDay: false,
-      meta: audit
-    };
-  });
-  this.refresh.next();
-}
+      return {
+        start: startDate,
+        end: endDate,
+        title: `${audit.auditTypeName} - Supplier: ${audit.supplierId}`,
+        color: this.getEventColor(audit.statusId),
+        allDay: false,
+        meta: audit
+      };
+    });
+    this.refresh.next();
+  }
 
   getEventColor(statusId: number) {
     switch (statusId) {
@@ -184,65 +163,10 @@ export class AuditCalendarComponent {
   get firstDayWeekday(): number { return this.firstDayOfMonth.getDay(); }
   get daysInMonth(): number { return this.lastDayOfMonth.getDate(); }
 
-  getStatusBadgeVariant(audit: CalendarAudit) {
-    if (audit.statusId === 1) return 'outline';
-    const score = audit.score ?? NaN;
-    if (!isNaN(score)) {
-      if (score >= 80) return 'primary';
-      if (score >= 50) return 'accent';
-      return 'destructive';
-    }
-    return 'secondary';
-  }
-
-  getStatusBadgeText(audit: CalendarAudit): string {
-    if (audit.statusId === 1) return 'Upcoming';
-    const score = audit.score ?? NaN;
-    if (!isNaN(score)) {
-      if (score >= 80) return 'Passed';
-      if (score >= 50) return 'Conditional';
-      return 'Failed';
-    }
-    return 'Completed';
-  }
-
-  getFormattedDateTime(isoString: string): string {
-    if (!isoString) return '---';
-    const dateObj = new Date(isoString);
-    if (isNaN(dateObj.getTime())) return 'Invalid Date';
-    const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
-    return ` at ${dateObj.toLocaleTimeString('en-US', optionsTime)}`;
-  }
-
   previousMonth(): void { this.currentDate = new Date(this.currentYear, this.currentMonth - 1, 1); }
   nextMonth(): void { this.currentDate = new Date(this.currentYear, this.currentMonth + 1, 1); }
-
-  getAuditsForDate(day: number): CalendarAudit[] {
-    const yyyy = this.currentYear;
-    const mm = String(this.currentMonth + 1).padStart(2, '0');
-    const dd = String(day).padStart(2, '0');
-    const dateStr = `${yyyy}-${mm}-${dd}`;
-    return this.calendarAudits.filter(audit => (audit.auditDate ?? '').substring(0, 10) === dateStr);
-  }
-
-  getCalendarDays(): Array<{ day: number; audits: CalendarAudit[] } | null> {
-    const days: Array<{ day: number; audits: CalendarAudit[] } | null> = [];
-    for (let i = 0; i < this.firstDayWeekday; i++) days.push(null);
-    for (let day = 1; day <= this.daysInMonth; day++) {
-      const auditsForDay = this.getAuditsForDate(day);
-      days.push({ day, audits: auditsForDay });
-    }
-    return days;
-  }
 
   getAuditClass(audit: CalendarAudit): string { return audit.statusId === 1 ? 'audit-pending' : 'audit-completed'; }
   getAuditDotClass(audit: CalendarAudit): string { return audit.statusId === 1 ? 'dot-pending' : 'dot-completed'; }
   onAuditClick(audit: CalendarAudit): void { console.log('Audit clicked:', audit.supplierId); }
-
-  trackByEvent(index: number, event: CalendarEvent): any {
-    return (event?.meta as any)?.auditId ?? event.start?.toString() ?? index;
-  }
-
-  trackByAuditId(index: number, audit: CalendarAudit): string { return audit.auditId; }
-
 }

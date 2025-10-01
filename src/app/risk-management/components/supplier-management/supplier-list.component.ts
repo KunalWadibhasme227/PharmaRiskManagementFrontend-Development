@@ -35,8 +35,7 @@ export interface Supplier {
   standalone: true,
   imports: [
     CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent,
-    ButtonComponent, InputComponent, BadgeComponent, ScrollAreaComponent, SelectComponent,
-    SelectTriggerComponent, SelectContentComponent, SelectItemComponent, FormsModule,
+    ButtonComponent, InputComponent, BadgeComponent, ScrollAreaComponent, FormsModule,
     MatFormFieldModule, MatSelectModule, MatDatepickerModule],
   templateUrl: './supplier-list.component.html',
   styleUrls: ['./supplier-list.component.scss']
