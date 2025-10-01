@@ -74,7 +74,7 @@ export interface ScheduleAuditFormData {
               <app-select-trigger 
                 placeholder="Select Supplier" 
                 [value]="getSelectedSupplierName()"
-                className="form-select">
+                (click)="toggleSupplierDropdown($event)">
               </app-select-trigger>
               <app-select-content [isOpen]="supplierDropdownOpen">
                 <app-select-item 
@@ -93,8 +93,8 @@ export interface ScheduleAuditFormData {
             <app-select [value]="formData.auditor">
               <app-select-trigger 
                 placeholder="Select Auditor" 
-                [value]="formData.auditor"
-                className="form-select">
+                [value]="getSelectedAuditorName()"
+                (click)="toggleAuditorDropdown($event)">
               </app-select-trigger>
               <app-select-content [isOpen]="auditorDropdownOpen">
                 <app-select-item 
@@ -113,8 +113,8 @@ export interface ScheduleAuditFormData {
             <app-select [value]="formData.auditType">
               <app-select-trigger 
                 placeholder="Select Audit Type" 
-                [value]="formData.auditType"
-                className="form-select">
+                [value]="getSelectedAuditorTypeName()"
+                (click)="toggleAuditTypeDropdown($event)">
               </app-select-trigger>
               <app-select-content [isOpen]="auditTypeDropdownOpen">
                 <app-select-item 
@@ -133,7 +133,9 @@ export interface ScheduleAuditFormData {
             <app-textarea
               placeholder="Enter any additional comments or notes..."
               [value]="formData.comment"
-              [rows]="4"
+              [rows]="3"
+              [maxLength]="200"
+              [required]="true"
               (onInput)="onCommentChange($event)"
               className="form-textarea">
             </app-textarea>
