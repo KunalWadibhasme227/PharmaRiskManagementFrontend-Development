@@ -1,0 +1,63 @@
+<div class="dialog-wrapper">
+  <h2 mat-dialog-title>Add Finding</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="auditForm" class="form-grid">
+
+      <!-- Title (left) -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" maxlength="30"/>
+        <mat-error *ngIf="auditForm.get('title')?.hasError('required')">Title is required</mat-error>
+      </mat-form-field>
+
+      <!-- Audit Dropdown (right) -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Select Audit</mat-label>
+        <mat-select formControlName="auditId">
+          <mat-option *ngFor="let audit of audits" [value]="audit.auditId">{{ audit.auditId }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="auditForm.get('auditId')?.hasError('required')">Audit is required</mat-error>
+      </mat-form-field>
+
+      <!-- Category (left) -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="categoryId">
+          <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="auditForm.get('categoryId')?.hasError('required')">Category is required</mat-error>
+      </mat-form-field>
+
+      <!-- Due Date (right) -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dueDate" [min]="currentdate" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="auditForm.get('dueDate')?.hasError('required')">Due Date is required</mat-error>
+      </mat-form-field>
+
+      <!-- Assignee (left) -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Assignee</mat-label>
+        <mat-select formControlName="assigneeId">
+          <mat-option *ngFor="let a of assignees" [value]="a.id">{{ a.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="auditForm.get('assigneeId')?.hasError('required')">Assignee is required</mat-error>
+      </mat-form-field>
+
+      <!-- Description (right) - make it full-width / span if you prefer full row set class "full-span" -->
+      <mat-form-field appearance="fill" class="grid-item full-span">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3" maxlength="200"></textarea>
+      </mat-form-field>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button class="btn-primary" (click)="onSubmit()" [disabled]="auditForm.invalid">Save</button>
+  </mat-dialog-actions>
+</div>

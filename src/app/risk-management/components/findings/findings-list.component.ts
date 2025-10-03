@@ -4,6 +4,7 @@ import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComp
 import { ButtonComponent } from '../ui/button.component';
 import { BadgeComponent } from '../ui/badge.component';
 import { TabsComponent, TabsListComponent, TabsTriggerComponent, TabsContentComponent } from '../ui/tabs.component';
+import { Findingservice } from '../../services/Findings/findingservice';
 
 export interface Finding {
   id: string;
@@ -40,49 +41,50 @@ export interface Finding {
 export class FindingsListComponent {
   activeTab = 'open';
 
-  findings: Finding[] = [
-    {
-      id: "1",
-      name: "Documentation Gap in Quality Manual",
-      description: "Missing procedures for batch record review process",
-      supplier: "PharmaCorp Ltd",
-      category: "major",
-      dateIdentified: "2024-12-01",
-      dueDate: "2025-01-15",
-      assignee: "Sarah Johnson",
-      progress: 75,
-      status: "open",
-    },
-    {
-      id: "2",
-      name: "Temperature Monitoring System Failure",
-      description: "Cold storage unit temperature exceeded limits for 2 hours",
-      supplier: "MedSupply Inc",
-      category: "critical",
-      dateIdentified: "2024-11-28",
-      dueDate: "2024-12-28",
-      assignee: "Michael Chen",
-      progress: 45,
-      status: "overdue",
-    },
-    {
-      id: "3",
-      name: "Training Record Incomplete",
-      description: "Operator training records missing for new equipment",
-      supplier: "BioTech Solutions",
-      category: "minor",
-      dateIdentified: "2024-11-15",
-      dueDate: "2024-12-15",
-      assignee: "Emily Davis",
-      progress: 100,
-      status: "closed",
-    },
-  ];
+  // findings: Finding[] = [
+  //   {
+  //     id: "1",
+  //     name: "Documentation Gap in Quality Manual",
+  //     description: "Missing procedures for batch record review process",
+  //     supplier: "PharmaCorp Ltd",
+  //     category: "major",
+  //     dateIdentified: "2024-12-01",
+  //     dueDate: "2025-01-15",
+  //     assignee: "Sarah Johnson",
+  //     progress: 75,
+  //     status: "open",
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Temperature Monitoring System Failure",
+  //     description: "Cold storage unit temperature exceeded limits for 2 hours",
+  //     supplier: "MedSupply Inc",
+  //     category: "critical",
+  //     dateIdentified: "2024-11-28",
+  //     dueDate: "2024-12-28",
+  //     assignee: "Michael Chen",
+  //     progress: 45,
+  //     status: "overdue",
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "Training Record Incomplete",
+  //     description: "Operator training records missing for new equipment",
+  //     supplier: "BioTech Solutions",
+  //     category: "minor",
+  //     dateIdentified: "2024-11-15",
+  //     dueDate: "2024-12-15",
+  //     assignee: "Emily Davis",
+  //     progress: 100,
+  //     status: "closed",
+  //   },
+  //];
+  
 
-  get filteredFindings(): Finding[] {
-    if (this.activeTab === "all") return this.findings;
-    return this.findings.filter((finding) => finding.status === this.activeTab);
+  constructor(private findingservice : Findingservice){
+    this.getFindingList(this.activeTab);
   }
+  filteredFindings: any[]=[]
 
   getCategoryBadgeVariant(category: Finding["category"]): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
     switch (category) {
@@ -137,7 +139,20 @@ export class FindingsListComponent {
   }
 
   onTabChange(tabValue: string): void {
+    this.getFindingList(tabValue);
     this.activeTab = tabValue;
+  }
+  getFindingList(value:any)
+  {
+    this.findingservice.getfindings(value).subscribe({
+      next: (response : any) => {
+        this.filteredFindings = response;
+      },
+      error: (err : any) => {
+        console.error('Error adding finding', err);
+        // Optionally show an error message to the user
+      }
+    });
   }
 
   onViewDetails(finding: Finding): void {
