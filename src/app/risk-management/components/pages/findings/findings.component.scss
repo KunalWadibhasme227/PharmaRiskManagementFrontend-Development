@@ -38,3 +38,13 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+.findings-header {
+  display: flex;
+  align-items: center;      
+  justify-content: space-between;        
+}
+
+.section-title {
+  margin: 0; 
+}
+

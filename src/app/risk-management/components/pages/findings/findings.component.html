@@ -1,7 +1,6 @@
 <div class="findings-page">
   <div class="findings-content">
-    <app-dashboard-header
-      title="Findings Management"
+    <app-dashboard-header title="Findings Management"
       subtitle="Module to track and manage audit findings and corrective actions">
     </app-dashboard-header>
 
@@ -14,7 +13,12 @@
 
       <!-- Findings List -->
       <section class="findings-section">
-        <h2 class="section-title">Findings List</h2>
+        <div class="findings-header">
+          <h2 class="section-title">Findings List</h2>
+          <app-button variant="default" className="submit-button" (click)="openForm()">
+            + Add Finding
+          </app-button>
+        </div>
         <app-findings-list></app-findings-list>
       </section>
     </main>
