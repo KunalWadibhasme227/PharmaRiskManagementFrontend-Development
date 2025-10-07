@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { DashboardHeaderComponent } from '../../dashboard-header/dashboard-header.component';
 import { TabsComponent, TabsContentComponent, TabsListComponent, TabsTriggerComponent } from '../../ui/tabs.component';
 import { UpcomingAuditsListComponent } from '../../audit-schedule/upcoming-audits-list.component';
-import { CompletedAuditsListComponent } from '../../audit-schedule/completed-audits-list.component';
 import { AuditCalendarComponent } from '../../audit-schedule/audit-calendar.component';
+import { CompletedAuditsListComponent } from '../../audit-schedule/completed-audits-list.component';
 
 @Component({
   selector: 'app-audits',
@@ -18,7 +18,7 @@ import { AuditCalendarComponent } from '../../audit-schedule/audit-calendar.comp
     TabsTriggerComponent,
     TabsContentComponent,
     UpcomingAuditsListComponent,
-    CompletedAuditsListComponent,
+    CompletedAuditsListComponent ,
     AuditCalendarComponent
   ],
   templateUrl: './audits.component.html',

@@ -1,0 +1,212 @@
+<!-- <app-modal 
+  [isOpen]="isOpen" 
+  title="{{ editMode ? 'Reschedule Audit' : 'Schedule New Audit' }}"
+  (onClose)="onCloseModal()">
+
+  <form [formGroup]="form" class="form-container">
+    <div class="form-grid">
+      
+      <div class="form-field">
+        <label class="form-label">Date</label>
+        <app-input
+          type="date"
+          formControlName="date"
+          className="form-input"
+          [min]="currentdate">
+        </app-input>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Time</label>
+        <app-input
+          type="time"
+          formControlName="time"
+          className="form-input">
+        </app-input>
+      </div>
+
+      <div class="form-field" #supplierDropdown>
+        <label class="form-label">Supplier</label>
+        <app-select formControlName="supplier">
+          <app-select-trigger 
+            placeholder="Select Supplier"
+            [value]="getSelectedSupplierName()"
+            (click)="toggleSupplierDropdown($event)">
+          </app-select-trigger>
+
+          <app-select-content [isOpen]="supplierDropdownOpen">
+            <app-select-item 
+              *ngFor="let supplier of suppliers" 
+              [value]="supplier.companyId"
+              (click)="onSupplierChange(supplier)">
+              {{ supplier.companyName }}
+            </app-select-item>
+          </app-select-content>
+        </app-select>
+        <div class="error-message" *ngIf="form.get('supplier')?.touched && form.get('supplier')?.invalid">
+          Please select a supplier
+        </div>
+      </div>
+
+      <div class="form-field" #auditorDropdown>
+        <label class="form-label">Auditor</label>
+        <app-select formControlName="auditor">
+          <app-select-trigger 
+            placeholder="Select Auditor"
+            [value]="getSelectedAuditorName()"
+            (click)="toggleAuditorDropdown($event)">
+          </app-select-trigger>
+
+          <app-select-content [isOpen]="auditorDropdownOpen">
+            <app-select-item 
+              *ngFor="let auditor of auditors" 
+              [value]="auditor.auditorId"
+              (click)="onAuditorChange(auditor)">
+              {{ auditor.name || auditor.auditorName || auditor }}
+            </app-select-item>
+          </app-select-content>
+        </app-select>
+        <div class="error-message" *ngIf="form.get('auditor')?.touched && form.get('auditor')?.invalid">
+          Please select an auditor
+        </div>
+      </div>
+
+      <div class="form-field" #auditTypeDropdown>
+        <label class="form-label">Audit Type</label>
+        <app-select formControlName="auditType">
+          <app-select-trigger 
+            placeholder="Select Audit Type"
+            [value]="getSelectedAuditorTypeName()"
+            (click)="toggleAuditTypeDropdown($event)">
+          </app-select-trigger>
+
+          <app-select-content [isOpen]="auditTypeDropdownOpen">
+            <app-select-item 
+              *ngFor="let type of auditTypes" 
+              [value]="type.auditTypeId"
+              (click)="onAuditTypeChange(type)">
+              {{ type.typeName }}
+            </app-select-item>
+          </app-select-content>
+        </app-select>
+        <div class="error-message" *ngIf="form.get('auditType')?.touched && form.get('auditType')?.invalid">
+          Please select an audit type
+        </div>
+      </div>
+
+      <div class="form-field full-width">
+        <label class="form-label">Comments</label>
+        <app-textarea
+          placeholder="Enter any additional comments or notes..."
+          formControlName="comment"
+          [rows]="3"
+          [maxLength]="200"
+          className="form-textarea">
+        </app-textarea>
+      </div>
+    </div>
+  </form>
+
+  <ng-container slot="footer">
+    <app-button
+      variant="secondary"
+      (onClick)="onCloseModal()"
+      className="cancel-button">
+      Cancel
+    </app-button>
+
+    <app-button
+      variant="default"
+      (onClick)="onSubmitForm()"
+      className="submit-button"
+      [disabled]="form.invalid">
+      {{ editMode ? 'Reschedule Audit' : 'Schedule Audit' }}
+    </app-button>
+  </ng-container>
+</app-modal> -->
+
+<div class="dialog-wrapper">
+  <h2 mat-dialog-title>Schedule Audit</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="scheduleForm" class="form-grid">
+
+      <!-- Audit Dropdown -->
+      <!-- <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Select Audit</mat-label>
+        <mat-select formControlName="auditId">
+          <mat-option *ngFor="let audit of audits" [value]="audit.id">{{ audit.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="scheduleForm.get('auditId')?.hasError('required')">Audit is required</mat-error>
+      </mat-form-field> -->
+
+      <!-- Audit Title -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Audit Title</mat-label>
+        <input matInput formControlName="auditTitle" maxlength="50" />
+        <mat-error *ngIf="scheduleForm.get('auditTitle')?.hasError('required')">Audit Title is
+          required</mat-error>
+      </mat-form-field>
+
+      <!-- Date -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="datepicker" formControlName="date" [min]="currentDate" />
+        <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker></mat-datepicker>
+        <mat-error *ngIf="scheduleForm.get('date')?.hasError('required')">Date is required</mat-error>
+      </mat-form-field>
+
+      <!-- Time -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Time</mat-label>
+        <input matInput [ngxMatTimepicker]="timepicker" readonly placeholder="Select Time" formControlName="time" />
+        <ngx-mat-timepicker #timepicker></ngx-mat-timepicker>
+        <mat-error *ngIf="scheduleForm.get('time')?.hasError('required')">
+          Time is required
+        </mat-error>
+      </mat-form-field>
+
+
+      <!-- Supplier -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Supplier</mat-label>
+        <mat-select formControlName="supplier">
+          <mat-option *ngFor="let s of suppliers" [value]="s.companyId">{{ s.companyName }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="scheduleForm.get('supplier')?.hasError('required')">Supplier is required</mat-error>
+      </mat-form-field>
+
+      <!-- Auditor -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Auditor</mat-label>
+        <mat-select formControlName="auditor">
+          <mat-option *ngFor="let a of auditors" [value]="a.auditorId">{{ a.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="scheduleForm.get('auditor')?.hasError('required')">Auditor is required</mat-error>
+      </mat-form-field>
+
+      <!-- Audit Type -->
+      <mat-form-field appearance="fill" class="grid-item full-span">
+        <mat-label>Audit Type</mat-label>
+        <mat-select formControlName="auditType">
+          <mat-option *ngFor="let type of auditTypes" [value]="type.auditTypeId">{{ type.typeName }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="scheduleForm.get('auditType')?.hasError('required')">Audit Type is
+          required</mat-error>
+      </mat-form-field>
+
+      <!-- Comment -->
+      <mat-form-field appearance="fill" class="grid-item full-span">
+        <mat-label>Comment</mat-label>
+        <textarea matInput formControlName="comment" rows="3" maxlength="200"></textarea>
+      </mat-form-field>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button class="btn-primary" (click)="onSubmit()" [disabled]="scheduleForm.invalid">Save</button>
+  </mat-dialog-actions>
+</div>

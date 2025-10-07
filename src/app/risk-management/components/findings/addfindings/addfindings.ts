@@ -92,6 +92,7 @@ export class Addfindings {
     this.findingservice.Addfindings(this.auditForm.value).subscribe({
       next: (response : any) => {
         this.notify.Success("Findings Added Successfully");
+            this.dialogRef.close();
         this.dialogRef.close(this.auditForm.value);
       },
       error: (err : any) => {
