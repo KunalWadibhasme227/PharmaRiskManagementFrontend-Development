@@ -85,7 +85,7 @@
                   <span>View Details</span>
                 </span>
               </app-button>
-              <app-button variant="outline" size="sm" (onClick)="onReschedule(audit)" className="audit-action">
+              <app-button variant="outline" size="sm" (onClick)="onReschedule(audit.auditId)" className="audit-action">
                 <span class="action-content">
                   <span class="action-icon">📅</span>
                   <span>Reschedule</span>
@@ -109,8 +109,11 @@
     </app-button>
   </div>
 
+ 
+
+  
   <!-- Schedule Audit Modal -->
-  <app-schedule-audit-modal [isOpen]="isScheduleModalOpen" (onClose)="onScheduleModalClose()"
+  <!-- <app-schedule-audit-modal [isOpen]="isScheduleModalOpen" (onClose)="onScheduleModalClose()"
     (onSubmit)="onScheduleModalSubmit($event)">
-  </app-schedule-audit-modal>
+  </app-schedule-audit-modal> -->
 </div>
