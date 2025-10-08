@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DashboardHeaderComponent } from '../../dashboard-header/dashboard-header.component';
@@ -17,6 +17,9 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./findings.component.scss']
 })
 export class FindingsComponent implements OnInit {
+
+  @ViewChild(FindingsListComponent) findingsList!: FindingsListComponent;
+
   constructor(private router: Router, private dialog: MatDialog) {}
 
   ngOnInit(): void {
@@ -30,6 +33,7 @@ export class FindingsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.findingsList.getFindingList('open');
         console.log('Audit Form Submitted:', result);
         // send result to backend via service
       }

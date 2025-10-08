@@ -17,7 +17,21 @@ export class Findingservice {
   }
 
   getfindings(value : any): Observable<any>{
-    return this.http.get<any>(`${this.baseUrl}?filter=`,value)
+    return this.http.get<any>(`${this.baseUrl}?filter=${value}`);
   }
-  
+
+  getfindingsById(Id : string) : Observable<any>{
+    return this.http.get<any>((`${this.baseUrl}/By/${Id}`));
+  }
+  markfindingcomplete(finding : any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/updateProgres`,finding);
+  }
+
+  getById(Id : string) : Observable<any>{
+    return this.http.get<any>(`${this.baseUrl}/${Id}`);
+  }
+  deletefinding(Id : string) : Observable<any>{
+    return this.http.delete<any>(`${this.baseUrl}/${Id}`);
+  }
+
 }
