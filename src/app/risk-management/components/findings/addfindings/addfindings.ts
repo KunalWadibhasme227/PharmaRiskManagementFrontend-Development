@@ -14,11 +14,18 @@ import { Observable } from 'rxjs';
 import { ScheduleAuditService } from '../../../shared/services/scheduleaudit/schedule-audit.service';
 import { AuditRequestDto } from '../../../models/supplier.model';
 import { NotificationService } from '../../../../shared/services/notification/notification.service';
+import { MatSliderModule } from '@angular/material/slider';
+
+export enum FindingStatus {
+  Open = 1,
+  InProgress = 2,
+  Completed = 3
+}
 
 @Component({
   selector: 'app-addfindings',
   imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatDatepickerModule, MatNativeDateModule, MatButtonModule, MatIconModule
+    MatSelectModule, MatDatepickerModule, MatNativeDateModule, MatButtonModule, MatIconModule, MatSliderModule
   ],
   templateUrl: './addfindings.html',
   styleUrl: './addfindings.scss'
@@ -28,83 +35,144 @@ export class Addfindings {
 
   // Example dropdown data (you’ll fetch these from API normally)
   audits: any[] = [
-  { id: 1, name: 'Audit A' },
-  { id: 2, name: 'Audit B' }
-];
+    { id: 1, name: 'Audit A' },
+    { id: 2, name: 'Audit B' }
+  ];
 
 
   categories: any[] = [
-    { id: 1, name: 'Finance' },
-    { id: 2, name: 'Operations' }
+    { id: 1, name: 'Critical' },
+    { id: 2, name: 'Major' },
+    { id: 3, name: 'Minor' }
   ];
 
   assignees: any[] = [
     { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' }
+    { id: 2, name: 'Jane Smith' },
+    { id: 1, name: 'Jonny Smith' },
+    { id: 2, name: 'Jems Joe' }
   ];
+
+  statuses = [
+    { label: 'Open', value: FindingStatus.Open },
+    { label: 'In Progress', value: FindingStatus.InProgress },
+    { label: 'Completed', value: FindingStatus.Completed }
+  ];
+
   currentdate: string = new Date().toISOString();
+  isEdit = false;
   constructor(
-    private fb: FormBuilder, private findingservice : Findingservice, private scheduleauditservice : ScheduleAuditService,
+    private fb: FormBuilder, private findingservice: Findingservice, private scheduleauditservice: ScheduleAuditService,
     public dialogRef: MatDialogRef<Addfindings>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private notify : NotificationService
+    @Inject(MAT_DIALOG_DATA) public data: any, private notify: NotificationService
   ) {
     this.auditForm = this.fb.group({
+      findingId:[''],
       title: ['', Validators.required],
       auditId: [null, Validators.required],
       categoryId: [null, Validators.required],
       dueDate: [null, Validators.required],
       assigneeId: [null, Validators.required],
-      tagId :[1],
-      statusId:[1],
-      progressPercent:[0],
+      tagId: [1],
+      statusId: [FindingStatus.Open],
+      progressPercent: [0],
       description: ['']
     });
 
     this.getAudit();
   }
 
-  private buildAuditRequestDto(): AuditRequestDto {
-      return { statusId: 0, searchText: '', pageNumber: 1, pageSize: 10000 };
+  ngOnInit() {
+    if (this.data?.id) {
+      this.isEdit = true;
+      this.loadAndPatch(this.data.id);
     }
-  
-  getAudit()
-  {
+  }
+  private buildAuditRequestDto(): AuditRequestDto {
+    return { statusId: 0, searchText: '', pageNumber: 1, pageSize: 10000 };
+  }
+
+  getAudit() {
     const filter = this.buildAuditRequestDto();
     this.scheduleauditservice.getScheduledAudits(filter).subscribe({
-      next:(response : any) =>{
-        if(response)
-        {
+      next: (response: any) => {
+        if (response) {
           this.audits = response.records;
         }
-        else{
-          this.audits= [];
+        else {
+          this.audits = [];
         }
       },
-      error: (err : any) => {
+      error: (err: any) => {
         console.error('Error fetching Audits', err);
       }
     })
   }
 
-  onSubmit() {
-  if (this.auditForm.valid) {
-    console.log("AuditForm : ",this.auditForm.value);
-    this.findingservice.Addfindings(this.auditForm.value).subscribe({
-      next: (response : any) => {
-        this.notify.Success("Findings Added Successfully");
-            this.dialogRef.close();
-        this.dialogRef.close(this.auditForm.value);
+  private loadAndPatch(id: string) {
+    //this.isLoading = true;
+    this.findingservice.getById(id).subscribe({
+      next: (response: any) => {
+        // this.isLoading = false;
+        if (response) {
+          // patch form — match names to your form controls
+          this.auditForm.patchValue({
+            findingId : response.findingId,
+            title: response.title ?? '',
+            auditId: response.auditId ?? null,
+            categoryId: response.categoryId ?? null,
+            dueDate: response.dueDate ? new Date(response.dueDate) : null,
+            assigneeId: response.assigneeId ?? null,
+            tagId: response.tagId ?? 1,
+            statusId: response.statusId ?? FindingStatus.Open,
+            progressPercent: response.progressPercent ?? 0,
+            description: response.description ?? ''
+          });
+        } else {
+          this.notify?.Success('Finding not found');
+        }
       },
-      error: (err : any) => {
-        console.error('Error adding finding', err);
-        // Optionally show an error message to the user
+      error: (err: any) => {
+        // this.isLoading = false;
+        console.error('Error loading finding', err);
+        this.notify?.Success('Failed to load finding');
       }
     });
-  } else {
-    // Mark all controls as touched to show validation errors
-    this.auditForm.markAllAsTouched();
   }
-}
+
+  onSubmit() {
+    if (this.auditForm.valid) {
+      console.log("AuditForm : ", this.auditForm.value);
+      if (!this.isEdit) {
+        this.findingservice.Addfindings(this.auditForm.value).subscribe({
+          next: (response: any) => {
+            this.notify.Success("Findings Added Successfully");
+            this.dialogRef.close(this.auditForm.value);
+          },
+          error: (err: any) => {
+            console.error('Error adding finding', err);
+            // Optionally show an error message to the user
+          }
+        });
+      }
+      else {
+        this.findingservice.markfindingcomplete(this.auditForm.value).subscribe({
+          next: (response: any) => {
+            this.notify.Success("Findings Updated Successfully");
+            this.dialogRef.close(this.auditForm.value);
+          },
+          error: (err: any) => {
+            console.error('Error adding finding', err);
+            // Optionally show an error message to the user
+          }
+        });
+      }
+
+    } else {
+      // Mark all controls as touched to show validation errors
+      this.auditForm.markAllAsTouched();
+    }
+  }
 
 
   onCancel() {

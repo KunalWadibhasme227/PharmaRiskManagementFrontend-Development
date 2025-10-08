@@ -1,0 +1,15 @@
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px; // space between slider and % text
+}
+
+.progress-label {
+  width: 100px;
+  font-weight: 500;
+}
+
+.progress-value {
+  min-width: 70px;
+  font-weight: bold;
+}
