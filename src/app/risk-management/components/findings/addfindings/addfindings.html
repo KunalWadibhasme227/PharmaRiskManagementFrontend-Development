@@ -7,7 +7,7 @@
       <!-- Title (left) -->
       <mat-form-field appearance="fill" class="grid-item">
         <mat-label>Title</mat-label>
-        <input matInput formControlName="title" maxlength="30"/>
+        <input matInput formControlName="title" maxlength="30" />
         <mat-error *ngIf="auditForm.get('title')?.hasError('required')">Title is required</mat-error>
       </mat-form-field>
 
@@ -15,7 +15,7 @@
       <mat-form-field appearance="fill" class="grid-item">
         <mat-label>Select Audit</mat-label>
         <mat-select formControlName="auditId">
-          <mat-option *ngFor="let audit of audits" [value]="audit.auditId">{{ audit.auditId }}</mat-option>
+          <mat-option *ngFor="let audit of audits" [value]="audit.auditId">{{ audit.auditTitle }}</mat-option>
         </mat-select>
         <mat-error *ngIf="auditForm.get('auditId')?.hasError('required')">Audit is required</mat-error>
       </mat-form-field>
@@ -47,11 +47,40 @@
         <mat-error *ngIf="auditForm.get('assigneeId')?.hasError('required')">Assignee is required</mat-error>
       </mat-form-field>
 
+      <mat-form-field appearance="fill" class="grid-item" *ngIf="isEdit">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="statusId">
+          <mat-option *ngFor="let s of statuses" [value]="s.value">
+            {{ s.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="auditForm.get('statusId')?.hasError('required')">Status is required</mat-error>
+      </mat-form-field>
+
+      <!-- Progress (slider with value) -->
+      <!-- Progress -->
+      <div class="grid-item full-span progress-wrapper" *ngIf="isEdit">
+        <label class="progress-label">Progress</label>
+
+        <mat-slider min="0" max="100" step="1">
+          <input matSliderThumb formControlName="progressPercent" />
+        </mat-slider>
+
+        <span class="progress-value">
+          {{ auditForm.get('progressPercent')?.value }}%
+        </span>
+      </div>
+
+
       <!-- Description (right) - make it full-width / span if you prefer full row set class "full-span" -->
       <mat-form-field appearance="fill" class="grid-item full-span">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="3" maxlength="200"></textarea>
       </mat-form-field>
+
+      <!-- Status (left) -->
+
+
 
     </form>
   </mat-dialog-content>
