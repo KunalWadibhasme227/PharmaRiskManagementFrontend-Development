@@ -1,16 +1,18 @@
 <div class="materials-page">
   <div class="materials-content">
-    <app-dashboard-header
-      title="Material Handling"
+    <app-dashboard-header title="Material Handling"
       subtitle="Monitor material storage, tracking, and handling procedures">
     </app-dashboard-header>
 
     <main class="materials-main">
       <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="materials-tabs">
         <app-tabs-list className="tabs-list-3">
-          <app-tabs-trigger value="inventory" [isActive]="activeTab === 'inventory'" (tabClick)="onTabChange($event)">Material Inventory</app-tabs-trigger>
-          <app-tabs-trigger value="storage" [isActive]="activeTab === 'storage'" (tabClick)="onTabChange($event)">Storage Conditions</app-tabs-trigger>
-          <app-tabs-trigger value="tracking" [isActive]="activeTab === 'tracking'" (tabClick)="onTabChange($event)">Batch Tracking</app-tabs-trigger>
+          <app-tabs-trigger value="inventory" [isActive]="activeTab === 'inventory'"
+            (tabClick)="onTabChange($event)">Material Inventory</app-tabs-trigger>
+          <app-tabs-trigger value="storage" [isActive]="activeTab === 'storage'"
+            (tabClick)="onTabChange($event)">Storage Conditions</app-tabs-trigger>
+          <app-tabs-trigger value="tracking" [isActive]="activeTab === 'tracking'"
+            (tabClick)="onTabChange($event)">Batch Tracking</app-tabs-trigger>
         </app-tabs-list>
 
         <app-tabs-content value="inventory" [isActive]="activeTab === 'inventory'" className="inventory-tab-content">
@@ -25,7 +27,7 @@
                 Filter
               </app-button>
             </div>
-            <app-button (onClick)="onAddMaterial()">Add Material</app-button>
+            <app-button (onClick)="openForm()">Add Material</app-button>
           </div>
 
           <div class="materials-grid">
@@ -35,12 +37,12 @@
                   <div class="material-info">
                     <div class="material-icon">📦</div>
                     <div class="material-details">
-                      <app-card-title className="material-title">{{ material.name }}</app-card-title>
-                      <app-card-description>Batch: {{ material.batch }}</app-card-description>
+                      <app-card-title className="material-title">{{ material.materialName }}</app-card-title>
+                      <app-card-description>Batch: {{ material.batchNumber }}</app-card-description>
                     </div>
                   </div>
-                  <app-badge [variant]="getStatusBadgeVariant(material.status)">
-                    {{ material.status }}
+                  <app-badge [variant]="getStatusBadgeVariant(material.statusCodeId)">
+                    {{ statusCode[material.statusCodeId] }}
                   </app-badge>
                 </div>
               </app-card-header>
@@ -48,31 +50,33 @@
                 <div class="material-details-grid">
                   <div class="detail-item">
                     <p class="detail-label">Supplier</p>
-                    <p class="detail-value">{{ material.supplier }}</p>
+                    <p class="detail-value">{{ material.supplierId }}</p>
                   </div>
-                  <div class="detail-item">
+                  <!-- <div class="detail-item">
                     <p class="detail-label">Quantity</p>
                     <p class="detail-value">{{ material.quantity }}</p>
-                  </div>
+                  </div> -->
                   <div class="detail-item">
                     <p class="detail-label">Storage Temp</p>
-                    <p class="detail-value">{{ material.temperature }}</p>
+                    <p class="detail-value">{{ material.requiredTemp || 'Room Temp'}}</p>
                   </div>
                   <div class="detail-item">
                     <p class="detail-label">Expiry</p>
-                    <p class="detail-value">{{ material.expiry }}</p>
+                    <p class="detail-value">{{ material.expiryDate | date }}</p>
                   </div>
                 </div>
                 <div class="material-footer">
-                  <div class="material-location">
+                  <!-- <div class="material-location">
                     <span class="location-icon">🛡️</span>
                     <span class="location-text">Location: {{ material.location }}</span>
-                  </div>
+                  </div> -->
                   <div class="material-actions">
-                    <app-button variant="outline" size="sm" (onClick)="onViewDetails(material)" className="action-button">
+                    <app-button variant="outline" size="sm" (onClick)="onViewDetails(material)"
+                      className="action-button">
                       View Details
                     </app-button>
-                    <app-button variant="outline" size="sm" (onClick)="onTrackBatch(material)" className="action-button">
+                    <app-button variant="outline" size="sm" (onClick)="onTrackBatch(material)"
+                      className="action-button">
                       Track Batch
                     </app-button>
                   </div>
@@ -80,6 +84,18 @@
               </app-card-content>
             </app-card>
           </div>
+          <div class="card-footer pagination-controls">
+            <app-button variant="outline" size="sm" (onClick)="prevPage()" [disabled]="!canGoPrev() || loading">
+              Previous
+            </app-button>
+
+            <span class="page-info">Page {{ pageNumber }} of {{ totalPages }}</span>
+
+            <app-button variant="outline" size="sm" (onClick)="nextPage()" [disabled]="!canGoNext() || loading">
+              Next
+            </app-button>
+          </div>
+
         </app-tabs-content>
 
         <app-tabs-content value="storage" [isActive]="activeTab === 'storage'" className="storage-tab-content">

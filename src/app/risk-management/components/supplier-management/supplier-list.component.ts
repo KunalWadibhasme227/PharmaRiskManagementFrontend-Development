@@ -68,7 +68,7 @@ states: any[] | null = [];
     this.fetchSuppliers();
   }
 
-  private buildRequest(): SupplierListRequest {
+  public buildRequest(): SupplierListRequest {
     return {
       search: this.searchTerm ?? '',
       legalStructure: null,
