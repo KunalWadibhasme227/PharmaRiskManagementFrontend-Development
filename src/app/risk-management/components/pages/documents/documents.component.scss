@@ -11,6 +11,37 @@
   overflow: hidden;
 }
 
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 16rem; 
+  
+}
+
+.search-input {
+  width: 16rem;
+}
+
+.search-icon {
+  font-size: 1.2rem;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.search-icon:hover {
+  color: var(--foreground);
+}
+
+
 .documents-header {
   display: flex;
   align-items: center;

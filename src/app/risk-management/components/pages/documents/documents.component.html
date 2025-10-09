@@ -1,6 +1,6 @@
 <div class="documents-page">
-  <app-sidebar [activeModule]="activeModule" (moduleChange)="onModuleChange($event)"></app-sidebar>
-  
+  <!-- <app-sidebar [activeModule]="activeModule" (moduleChange)="onModuleChange($event)"></app-sidebar>
+   -->
   <div class="documents-content">
     <app-dashboard-header
       title="Document Management"
@@ -18,19 +18,23 @@
         <app-tabs-content value="documents" [isActive]="activeTab === 'documents'" className="documents-tab-content">
           <!-- Search and Filter -->
           <div class="search-filter-section">
-            <div class="search-container">
-              <span class="search-icon">🔍</span>
+           <div class="search-container">
               <app-input
                 placeholder="Search documents..."
                 [value]="searchTerm"
                 (onInput)="onSearchChange($event)"
                 className="search-input">
               </app-input>
+
+              <span class="search-icon">🔍</span>
+
               <app-button variant="outline" size="sm" className="filter-button">
                 <span class="filter-icon">🔽</span>
                 Filter
               </app-button>
             </div>
+
+
             <app-button (onClick)="onUploadDocument()" className="upload-button">
               <span class="button-icon">📤</span>
               Upload Document

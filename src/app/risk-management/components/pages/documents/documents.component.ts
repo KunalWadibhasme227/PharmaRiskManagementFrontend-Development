@@ -8,6 +8,8 @@ import { CardComponent, CardContentComponent, CardDescriptionComponent, CardHead
 import { InputComponent } from '../../ui/input.component';
 import { BadgeComponent } from '../../ui/badge.component';
 import { SidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Uploaddocumentcomponent } from '../../uploaddocumentcomponent/uploaddocumentcomponent';
 export interface Document {
   id: number;
   name: string;
@@ -97,6 +99,7 @@ export class DocumentsComponent implements OnInit {
       size: "1.8 MB",
     },
   ];
+  
 
   categories: Category[] = [
     { name: "Certifications", count: 45, pending: 3 },
@@ -130,7 +133,7 @@ export class DocumentsComponent implements OnInit {
     },
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Component initialization
@@ -167,8 +170,17 @@ export class DocumentsComponent implements OnInit {
   }
 
   onUploadDocument(): void {
-    console.log('Upload document clicked');
-    // Handle upload logic here
+     const dialogRef = this.dialog.open(Uploaddocumentcomponent, {
+              width: '800px',
+              panelClass: 'uploaddocument-dialog-panel'
+            });
+        
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                console.log('uploaddocument Form Submitted:', result);
+                // send result to backend via service
+              }
+            });
   }
 
   onNewCategory(): void {
