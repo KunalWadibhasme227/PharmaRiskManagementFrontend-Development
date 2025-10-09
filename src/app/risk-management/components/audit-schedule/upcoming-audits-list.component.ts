@@ -5,8 +5,6 @@ import { ButtonComponent } from '../ui/button.component';
 import { InputComponent } from '../ui/input.component';
 import { BadgeComponent } from '../ui/badge.component';
 import { ScrollAreaComponent } from '../ui/scroll-area.component';
-import { SelectComponent, SelectTriggerComponent, SelectContentComponent, SelectItemComponent } from '../ui/select.component';
-import { ScheduleAuditModalComponent, ScheduleAuditFormData } from './schedule-audit-modal.component';
 import { ScheduleAuditService } from '../../shared/services/scheduleaudit/schedule-audit.service';
 import { AuditRequestDto } from '../../models/supplier.model';
 import { Router } from '@angular/router';
@@ -14,6 +12,8 @@ import { SupplierStateService } from '../../shared/services/suppliers/supplier-s
 import { RemainingDurationPipe } from '../../models/remaining-duration.pipe';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
 import { tap } from 'rxjs';
+import { ScheduleAuditFormData, Scheduleauditscomponent } from './scheduleauditscomponent/scheduleauditscomponent';
+import { MatDialog } from '@angular/material/dialog';
 
 // export interface UpcomingAudit {
 //   id: string;
@@ -33,7 +33,7 @@ import { tap } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule, CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent, ButtonComponent,
-    InputComponent, BadgeComponent, ScrollAreaComponent, ScheduleAuditModalComponent, RemainingDurationPipe 
+    InputComponent, BadgeComponent, ScrollAreaComponent, Scheduleauditscomponent, RemainingDurationPipe 
   ],
   templateUrl: './upcoming-audits-list.component.html',
   styleUrls: ['./upcoming-audits-list.component.scss']
@@ -49,7 +49,7 @@ pageNumber = 1;
   auditdetailbyId: any;
 
   constructor(private auditService : ScheduleAuditService,private router: Router, private supplierState : SupplierStateService,
-    private notify: NotificationService
+    private notify: NotificationService, private dialog: MatDialog
   ) {
 
         this.getAudits();
@@ -124,7 +124,17 @@ getStatusBadgeText(status: number): string {
   }
 
   onScheduleAudit(): void {
-    this.isScheduleModalOpen = true;
+    const dialogRef = this.dialog.open(Scheduleauditscomponent, {
+          width: '800px',
+          panelClass: 'audit-dialog-panel'
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            console.log('Audit Form Submitted:', result);
+            // send result to backend via service
+          }
+        });
   }
 
   onScheduleModalClose(): void {
@@ -146,23 +156,40 @@ getStatusBadgeText(status: number): string {
   this.router.navigate(['/audits/view']);
 }
 
- onReschedule(audit: any): void {
-  if (!audit) return;
+ onReschedule(auditId: string): void {
+  // if (!audit) return;
 
-  this.auditService.getAuditById(audit.auditId).pipe(
-    tap((res: any) => this.auditdetailbyId = res)
-  ).subscribe({
-    next: () => {
-      this.supplierState.setSupplier(this.auditdetailbyId);
-      this.isScheduleModalOpen = true;
-      console.log('Rescheduling audit for:', this.auditdetailbyId);
-    },
-    error: () => {
-      this.notify.Error('Failed to fetch audit details');
-    }
-  });
+  // this.auditService.getAuditById(audit.auditId).pipe(
+  //   tap((res: any) => this.auditdetailbyId = res)
+  // ).subscribe({
+  //   next: () => {
+  //     this.supplierState.setSupplier(this.auditdetailbyId);
+  //     this.isScheduleModalOpen = true;
+  //     console.log('Rescheduling audit for:', this.auditdetailbyId);
+  //   },
+  //   error: () => {
+  //     this.notify.Error('Failed to fetch audit details');
+  //   }
+  // });
+  const ref = this.dialog.open(Scheduleauditscomponent, {
+      width: '800px',
+      data: { id: auditId }
+    });
+
+    ref.afterClosed().subscribe(() => {
+    this.getAudits();
+    });
 }
+// UpdateProgressDialog(finding: string): void {
+//     const ref = this.dialog.open(Addfindings, {
+//       width: '800px',
+//       data: { id: finding }
+//     });
 
+//     ref.afterClosed().subscribe(() => {
+//       this.getFindingList(this.activeTab);
+//     });
+//   }
 
   prevPage() {
   if (this.pageNumber > 1) {
