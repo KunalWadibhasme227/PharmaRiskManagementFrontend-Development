@@ -7,18 +7,23 @@ import { ButtonComponent } from '../../ui/button.component';
 import { InputComponent } from '../../ui/input.component';
 import { TabsComponent, TabsContentComponent, TabsListComponent, TabsTriggerComponent } from '../../ui/tabs.component';
 import { CardComponent, CardContentComponent, CardDescriptionComponent, CardHeaderComponent, CardTitleComponent } from '../../ui/card.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Addmaterial } from '../../Materials/addmaterial/addmaterial';
+import { MaterialService } from '../../../services/Materials/material-service';
+import { StatusCode } from '../../Materials/addmaterial/addmaterial';
 
-export interface Material {
-  id: number;
-  name: string;
-  batch: string;
-  supplier: string;
-  status: "In Storage" | "In Transit" | "Quality Check";
-  temperature: string;
-  quantity: string;
-  expiry: string;
-  location: string;
-}
+
+// export interface Material {
+//   id: number;
+//   name: string;
+//   batch: string;
+//   supplier: string;
+//   status: "In Storage" | "In Transit" | "Quality Check";
+//   temperature: string;
+//   quantity: string;
+//   expiry: string;
+//   location: string;
+// }
 
 export interface StorageCondition {
   zone: string;
@@ -51,41 +56,45 @@ export interface StorageCondition {
 })
 export class MaterialsComponent implements OnInit {
   activeTab = 'inventory';
-
-  materials: Material[] = [
-    {
-      id: 1,
-      name: "Active Pharmaceutical Ingredient A",
-      batch: "API-2024-001",
-      supplier: "ChemCorp Ltd",
-      status: "In Storage",
-      temperature: "2-8°C",
-      quantity: "500kg",
-      expiry: "2024-12-15",
-      location: "Warehouse A-1",
-    },
-    {
-      id: 2,
-      name: "Excipient Lactose Monohydrate",
-      batch: "EXC-2024-045",
-      supplier: "BioSupply Inc",
-      status: "In Transit",
-      temperature: "Room Temp",
-      quantity: "1000kg",
-      expiry: "2025-06-30",
-      location: "In Transit",
-    },
-    {
-      id: 3,
-      name: "Packaging Material - Bottles",
-      batch: "PKG-2024-012",
-      supplier: "PackTech Solutions",
-      status: "Quality Check",
-      temperature: "Room Temp",
-      quantity: "10,000 units",
-      expiry: "N/A",
-      location: "QC Lab",
-    },
+  statusCode = StatusCode;
+  pageNumber = 1;
+  pageSize = 5;
+  totalRecords = 0;
+  loading : boolean = false
+  materials: any[] = [
+    // {
+    //   id: 1,
+    //   name: "Active Pharmaceutical Ingredient A",
+    //   batch: "API-2024-001",
+    //   supplier: "ChemCorp Ltd",
+    //   status: "In Storage",
+    //   temperature: "2-8°C",
+    //   quantity: "500kg",
+    //   expiry: "2024-12-15",
+    //   location: "Warehouse A-1",
+    // },
+    // {
+    //   id: 2,
+    //   name: "Excipient Lactose Monohydrate",
+    //   batch: "EXC-2024-045",
+    //   supplier: "BioSupply Inc",
+    //   status: "In Transit",
+    //   temperature: "Room Temp",
+    //   quantity: "1000kg",
+    //   expiry: "2025-06-30",
+    //   location: "In Transit",
+    // },
+    // {
+    //   id: 3,
+    //   name: "Packaging Material - Bottles",
+    //   batch: "PKG-2024-012",
+    //   supplier: "PackTech Solutions",
+    //   status: "Quality Check",
+    //   temperature: "Room Temp",
+    //   quantity: "10,000 units",
+    //   expiry: "N/A",
+    //   location: "QC Lab",
+    // },
   ];
 
   storageConditions: StorageCondition[] = [
@@ -95,27 +104,62 @@ export class MaterialsComponent implements OnInit {
     { zone: "Dry Storage", temperature: "15-30°C", humidity: "35%", status: "Normal" },
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private dialog: MatDialog, private materialService : MaterialService) {}
 
   ngOnInit(): void {
     // Component initialization
+    this.FetchMaterial();
   }
 
+  openForm() {
+      const dialogRef = this.dialog.open(Addmaterial, {
+        width: '800px',
+        panelClass: 'audit-dialog-panel'
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          //this.findingsList.getFindingList('open');
+          console.log('Audit Form Submitted:', result);
+          // send result to backend via service
+        }
+      });
+    }
   onTabChange(tab: string): void {
     this.activeTab = tab;
   }
 
-  onAddMaterial(): void {
-    console.log('Adding new material');
-    // Handle add material logic here
+
+  FetchMaterial()
+  {
+    const filter = {
+    searchText: "",
+    pageNumber: 1,
+    pageSize: 10
+  };
+    this.materialService.getMaterials(filter).subscribe({
+      next :(res :any) =>{
+        if(res.statusCode ==200)
+        {
+          this.materials = res.data.records;
+          console.log("this.materials : ", this.materials)
+        }
+        else{
+          this.materials = [];
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching material', err);
+      }
+    })
   }
 
-  onViewDetails(material: Material): void {
+  onViewDetails(material: any): void {
     console.log('Viewing details for material:', material.name);
     // Handle view details logic here
   }
 
-  onTrackBatch(material: Material): void {
+  onTrackBatch(material: any): void {
     console.log('Tracking batch for material:', material.name);
     // Handle track batch logic here
   }
@@ -125,13 +169,13 @@ export class MaterialsComponent implements OnInit {
     // Handle initialize tracking logic here
   }
 
-  getStatusBadgeVariant(status: Material["status"]): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
+  getStatusBadgeVariant(status: any): "default" | "secondary" | "destructive" | "outline" | "primary" | "accent" {
     switch (status) {
-      case "In Storage":
+      case 1:
         return "default";
-      case "In Transit":
+      case 2:
         return "secondary";
-      case "Quality Check":
+      case 3:
         return "outline";
       default:
         return "default";
@@ -148,12 +192,35 @@ export class MaterialsComponent implements OnInit {
         return "default";
     }
   }
-
-  trackByMaterialId(index: number, material: Material): number {
+  trackByMaterialId(index: number, material: any): number {
     return material.id;
   }
 
   trackByStorageZone(index: number, condition: StorageCondition): string {
     return condition.zone;
   }
+
+    prevPage() {
+  if (this.pageNumber > 1) {
+    this.pageNumber--;
+    this.FetchMaterial();
+  }
+}
+
+nextPage() {
+  if (this.pageNumber * this.pageSize < this.totalRecords) {
+    this.pageNumber++;
+    this.FetchMaterial();
+  }
+}
+canGoPrev(): boolean {
+  return this.pageNumber > 1;
+}
+
+canGoNext(): boolean {
+  return this.pageNumber * this.pageSize < this.totalRecords;
+}
+get totalPages(): number {
+  return this.totalRecords > 0 ? Math.ceil(this.totalRecords / this.pageSize) : 1;
+}
 }

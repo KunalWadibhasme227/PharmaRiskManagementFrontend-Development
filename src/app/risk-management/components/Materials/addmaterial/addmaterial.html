@@ -1,0 +1,98 @@
+<div class="dialog-wrapper">
+  <h2 mat-dialog-title>{{ isEdit ? 'Edit Material' : 'Add Material' }}</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="materialForm" class="form-grid">
+
+      <!-- Material Name -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Material Name</mat-label>
+        <input matInput formControlName="materialName" maxlength="50" />
+        <mat-error *ngIf="materialForm.get('materialName')?.hasError('required')">
+          Material Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Category Code -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="categoryCodeId">
+          <mat-option *ngFor="let cat of categoryCodes" [value]="cat.value">
+            {{ cat.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="materialForm.get('categoryCodeId')?.hasError('required')">
+          Category is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Supplier -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Supplier</mat-label>
+        <mat-select formControlName="supplierId">
+          <mat-option *ngFor="let s of suppliers" [value]="s.companyId">
+            {{ s.companyName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="materialForm.get('supplierId')?.hasError('required')">
+          Supplier is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Status -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="statusCodeId">
+          <mat-option *ngFor="let status of statusCodes" [value]="status.value">
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="materialForm.get('statusCodeId')?.hasError('required')">
+          Status is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Expiry Date -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Expiry Date</mat-label>
+        <input matInput [matDatepicker]="expiryPicker" formControlName="expiryDate" [min]="minDate"/>
+        <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+        <mat-datepicker #expiryPicker></mat-datepicker>
+        <mat-error *ngIf="materialForm.get('expiryDate')?.hasError('required')">
+          Expiry Date is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Manufacturing Date -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Manufacturing Date</mat-label>
+        <input matInput [matDatepicker]="mfgPicker" formControlName="manufacturingDate" />
+        <mat-datepicker-toggle matSuffix [for]="mfgPicker"></mat-datepicker-toggle>
+        <mat-datepicker #mfgPicker></mat-datepicker>
+        <mat-error *ngIf="materialForm.get('manufacturingDate')?.hasError('required')">
+          Manufacturing Date is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Required Temp -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Required Temperature</mat-label>
+        <input matInput formControlName="requiredTemp" maxlength="30" />
+      </mat-form-field>
+
+      <!-- Required Humidity -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Required Humidity</mat-label>
+        <input matInput formControlName="requiredHumidity" maxlength="30" />
+      </mat-form-field>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="materialForm.invalid">
+      {{ isEdit ? 'Update' : 'Save' }}
+    </button>
+  </mat-dialog-actions>
+</div>
