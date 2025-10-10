@@ -33,5 +33,8 @@ export class Findingservice {
   deletefinding(Id : string) : Observable<any>{
     return this.http.delete<any>(`${this.baseUrl}/${Id}`);
   }
+  GetfindingSummary() : Observable<any>{
+    return this.http.get<any>(`${this.baseUrl}/findingSummary`);
+  }
 
 }

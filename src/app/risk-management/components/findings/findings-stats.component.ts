@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../ui/card.component';
+import { Findingservice } from '../../services/Findings/findingservice';
+import { FindingsRefreshService } from '../../shared/findings-refresh-service';
 
 export interface FindingStat {
   title: string;
@@ -24,36 +26,15 @@ export interface FindingStat {
   styleUrls: ['./findings-stats.component.scss']
 })
 export class FindingsStatsComponent {
-  stats: FindingStat[] = [
-    {
-      title: "Total Findings",
-      value: 45,
-      description: "All time findings",
-      icon: "📄",
-      variant: "default",
-    },
-    {
-      title: "Open Findings",
-      value: 12,
-      description: "Currently active",
-      icon: "⚠️",
-      variant: "warning",
-    },
-    {
-      title: "Overdue Findings",
-      value: 3,
-      description: "Past due date",
-      icon: "⏰",
-      variant: "danger",
-    },
-    {
-      title: "Closed Findings",
-      value: 30,
-      description: "Resolved and closed",
-      icon: "✅",
-      variant: "success",
-    },
-  ];
+
+  constructor(private findingservice: Findingservice, private refreshService: FindingsRefreshService
+){
+    this.GetSummary();
+     this.refreshService.refresh$.subscribe(() => {
+      this.GetSummary();
+    });
+  }
+  stats: FindingStat[] =[];
 
   getVariantStyles(variant: string): string {
     switch (variant) {
@@ -96,4 +77,55 @@ export class FindingsStatsComponent {
   trackByStatTitle(index: number, stat: FindingStat): string {
     return stat.title;
   }
+  summary: any;
+
+  // GetSummary(){
+  //   this.findingservice.GetfindingSummary().subscribe({
+  //     next : (res : any) =>{
+  //         summary : res;
+  //     }
+  //   })
+  // }
+
+  GetSummary() {
+  this.findingservice.GetfindingSummary().subscribe({
+    next: (res: any) => {
+      this.stats = [
+        {
+          title: "Total Findings",
+          value: res.totalFindings,
+          description: "All time findings",
+          icon: "📄",
+          variant: "default",
+        },
+        {
+          title: "Open Findings",
+          value: res.openFindings,
+          description: "Currently active",
+          icon: "⚠️",
+          variant: "warning",
+        },
+        {
+          title: "Overdue Findings",
+          value: res.overdueFindings,
+          description: "Past due date",
+          icon: "⏰",
+          variant: "danger",
+        },
+        {
+          title: "Closed Findings",
+          value: res.closedFindings,
+          description: "Resolved and closed",
+          icon: "✅",
+          variant: "success",
+        },
+      ];
+    },
+    error: (err) => {
+      console.error("Error fetching summary:", err);
+    }
+  });
+}
+
+
 }

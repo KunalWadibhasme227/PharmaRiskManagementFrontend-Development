@@ -7,6 +7,7 @@ import { FindingsListComponent } from '../../findings/findings-list.component';
 import { ButtonComponent } from '../../ui/button.component';
 import { Addfindings } from '../../findings/addfindings/addfindings';
 import { MatDialog } from '@angular/material/dialog';
+import { Findingservice } from '../../../services/Findings/findingservice';
 @Component({
   selector: 'app-findings',
   standalone: true,
@@ -19,12 +20,15 @@ import { MatDialog } from '@angular/material/dialog';
 export class FindingsComponent implements OnInit {
 
   @ViewChild(FindingsListComponent) findingsList!: FindingsListComponent;
+  @ViewChild(FindingsStatsComponent) findingsStats!: FindingsStatsComponent;
 
-  constructor(private router: Router, private dialog: MatDialog) {}
+
+  constructor(private router: Router, private dialog: MatDialog, private findingservice: Findingservice ) {}
 
   ngOnInit(): void {
     // Component initialization
   }
+
   openForm() {
     const dialogRef = this.dialog.open(Addfindings, {
       width: '800px',
@@ -34,6 +38,7 @@ export class FindingsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.findingsList.getFindingList('open');
+        this.findingsStats.GetSummary();
         console.log('Audit Form Submitted:', result);
         // send result to backend via service
       }

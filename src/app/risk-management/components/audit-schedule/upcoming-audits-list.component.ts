@@ -14,6 +14,8 @@ import { NotificationService } from '../../../shared/services/notification/notif
 import { tap } from 'rxjs';
 import { ScheduleAuditFormData, Scheduleauditscomponent } from './scheduleauditscomponent/scheduleauditscomponent';
 import { MatDialog } from '@angular/material/dialog';
+import { FindingsRefreshService } from '../../shared/findings-refresh-service';
+
 
 // export interface UpcomingAudit {
 //   id: string;
@@ -49,10 +51,13 @@ pageNumber = 1;
   auditdetailbyId: any;
 
   constructor(private auditService : ScheduleAuditService,private router: Router, private supplierState : SupplierStateService,
-    private notify: NotificationService, private dialog: MatDialog
+    private notify: NotificationService, private dialog: MatDialog, private refreshService: FindingsRefreshService
   ) {
 
         this.getAudits();
+        this.refreshService.refresh$.subscribe(() => {
+        this.getAudits();
+    });
 
   }
   

@@ -95,6 +95,7 @@
           <app-card-title>Overdue Findings ({{ filteredFindings.length }})</app-card-title>
         </app-card-header>
         <app-card-content className="findings-content">
+          <div *ngIf="filteredFindings.length == 0">No OverDue Findings</div>
           <div *ngFor="let finding of filteredFindings; trackBy: trackByFindingId" class="finding-card">
             <div class="finding-card-header">
               <div class="finding-details">
@@ -204,7 +205,7 @@
         </app-card-header>
         <app-card-content className="findings-content">
           <div *ngFor="let finding of filteredFindings; trackBy: trackByFindingId" class="finding-card">
-            <div class="finding-card-header">
+            <div class="finding-card-header"> 
               <div class="finding-details">
                 <div class="finding-title-row">
                   <h4 class="finding-name">{{ finding.title }}</h4>
@@ -243,14 +244,14 @@
                   <span>View Details</span>
                 </span>
               </app-button>
-              <app-button *ngIf="finding.status !== 'closed'" variant="outline" size="sm"
+              <app-button *ngIf="finding.status !== 'closed' && finding.progressPercent <100" variant="outline" size="sm" 
                 (onClick)="UpdateProgressDialog(finding.findingId)" className="finding-action">
                 <span class="action-content">
                   <!-- <span class="action-icon">✏️</span> -->
                   <span>Update Progress</span>
                 </span>
               </app-button>
-              <app-button *ngIf="finding.status !== 'closed'" variant="default" size="sm"
+              <app-button *ngIf="finding.status !== 'closed' && finding.progressPercent <100" variant="default" size="sm"
                 (onClick)="onMarkComplete(finding)" className="finding-action">
                 <span class="action-content">
                   <!-- <span class="action-icon">✅</span> -->

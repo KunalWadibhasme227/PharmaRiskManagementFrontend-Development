@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../ui/card.component';
 import { ButtonComponent } from '../ui/button.component';
@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
 import { Addfindings } from './addfindings/addfindings';
 import { MatDialog } from '@angular/material/dialog';
+import { FindingsStatsComponent } from './findings-stats.component';
+import { FindingsRefreshService } from '../../shared/findings-refresh-service';
 
 @Component({
   selector: 'app-findings-list',
@@ -29,8 +31,12 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './findings-list.component.html',
   styleUrls: ['./findings-list.component.scss']
 })
+
+
 export class FindingsListComponent {
   activeTab = 'open';
+    @ViewChild(FindingsStatsComponent) findingsStats!: FindingsStatsComponent;
+
 
   assignees: any[] = [
     { id: 1, name: 'John Doe' },
@@ -40,7 +46,7 @@ export class FindingsListComponent {
   ];
 
   constructor(private findingservice: Findingservice, private router: Router, private notify: NotificationService
-    , private dialog: MatDialog) {
+    , private dialog: MatDialog, private refreshService: FindingsRefreshService) {
     this.getFindingList(this.activeTab);
   }
   filteredFindings: any[] = []
@@ -141,6 +147,8 @@ export class FindingsListComponent {
     this.findingservice.markfindingcomplete(finding).subscribe({
       next: (response: any) => {
         this.getFindingList(this.activeTab);
+        this.findingsStats.GetSummary();
+        this.refreshService.triggerRefresh();
         this.notify.Success("Progress Updated Successfully");
       }
     })
@@ -152,6 +160,8 @@ export class FindingsListComponent {
     this.findingservice.deletefinding(findingId).subscribe({
       next: (response: any) => {
         this.getFindingList(this.activeTab);
+        this.findingsStats.GetSummary();
+        this.refreshService.triggerRefresh();
         this.notify.Success("Finding Deleted Successfully");
       }
     });

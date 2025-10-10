@@ -15,6 +15,7 @@ import { ScheduleAuditService } from '../../../shared/services/scheduleaudit/sch
 import { AuditRequestDto } from '../../../models/supplier.model';
 import { NotificationService } from '../../../../shared/services/notification/notification.service';
 import { MatSliderModule } from '@angular/material/slider';
+import { FindingsRefreshService } from '../../../shared/findings-refresh-service';
 
 export enum FindingStatus {
   Open = 1,
@@ -64,10 +65,10 @@ export class Addfindings {
   constructor(
     private fb: FormBuilder, private findingservice: Findingservice, private scheduleauditservice: ScheduleAuditService,
     public dialogRef: MatDialogRef<Addfindings>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private notify: NotificationService
+    @Inject(MAT_DIALOG_DATA) public data: any, private notify: NotificationService, private refreshService: FindingsRefreshService
   ) {
     this.auditForm = this.fb.group({
-      findingId:[''],
+      findingId: [''],
       title: ['', Validators.required],
       auditId: [null, Validators.required],
       categoryId: [null, Validators.required],
@@ -116,8 +117,10 @@ export class Addfindings {
         // this.isLoading = false;
         if (response) {
           // patch form — match names to your form controls
+          console.log("test=>", response.dueDate);
+
           this.auditForm.patchValue({
-            findingId : response.findingId,
+            findingId: response.findingId,
             title: response.title ?? '',
             auditId: response.auditId ?? null,
             categoryId: response.categoryId ?? null,
@@ -141,13 +144,18 @@ export class Addfindings {
   }
 
   onSubmit() {
+    console.log("AuditForm is Valid: ", this.auditForm.value.dueDate);
     if (this.auditForm.valid) {
-      console.log("AuditForm : ", this.auditForm.value);
+      const date: Date = this.auditForm.value.dueDate;
+      const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      this.auditForm.patchValue({ dueDate: utcDate });
+      console.log("audit from =>", this.auditForm);
       if (!this.isEdit) {
         this.findingservice.Addfindings(this.auditForm.value).subscribe({
           next: (response: any) => {
             this.notify.Success("Findings Added Successfully");
             this.dialogRef.close(this.auditForm.value);
+            this.refreshService.triggerRefresh();
           },
           error: (err: any) => {
             console.error('Error adding finding', err);
@@ -160,6 +168,7 @@ export class Addfindings {
           next: (response: any) => {
             this.notify.Success("Findings Updated Successfully");
             this.dialogRef.close(this.auditForm.value);
+            this.refreshService.triggerRefresh();
           },
           error: (err: any) => {
             console.error('Error adding finding', err);
@@ -177,5 +186,6 @@ export class Addfindings {
 
   onCancel() {
     this.dialogRef.close();
+    this.refreshService.triggerRefresh();
   }
 }
