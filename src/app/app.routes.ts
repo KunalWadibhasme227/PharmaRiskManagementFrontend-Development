@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { SupplierDetailsComponent } from './risk-management/components/supplier-details/supplier-details.component';
 import { Viewfindingdetails } from './risk-management/components/findings/viewfindingdetails/viewfindingdetails';
+import { Viewuploaddocumentcomponent } from './risk-management/components/viewuploaddocumentcomponent/viewuploaddocumentcomponent';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/overview', pathMatch: 'full' },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'ai-analytics', loadComponent: () => import('./risk-management/components/pages/ai-analytics/ai-analytics.component').then(m => m.AIAnalyticsComponent) },
   { path: 'suppliers/details', component: SupplierDetailsComponent },
   { path: 'audits/view', loadComponent: () => import('./risk-management/components/audit-schedule/viewaudits/viewaudits').then(m => m.Viewaudits) },
+  { path: 'documents/view/:id', component: Viewuploaddocumentcomponent },
   { path: 'findings/view/:id', component : Viewfindingdetails}
 
 ];

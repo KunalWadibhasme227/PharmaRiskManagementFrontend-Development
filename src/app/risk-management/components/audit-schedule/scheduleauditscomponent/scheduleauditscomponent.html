@@ -25,17 +25,17 @@
       <!-- Date -->
       <mat-form-field appearance="fill" class="grid-item">
         <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="datepicker" formControlName="date" [min]="currentDate" />
+        <input  (dateChange)="dateChange($event)" matInput [matDatepicker]="datepicker" [min]="today" formControlName="date" />
         <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
-        <mat-datepicker #datepicker></mat-datepicker>
+        <mat-datepicker (selectedValueChange)="dateChange($event)" #datepicker></mat-datepicker>
         <mat-error *ngIf="scheduleForm.get('date')?.hasError('required')">Date is required</mat-error>
       </mat-form-field>
 
       <!-- Time -->
       <mat-form-field appearance="fill" class="grid-item">
         <mat-label>Time</mat-label>
-        <input matInput [ngxMatTimepicker]="timepicker" readonly placeholder="Select Time" formControlName="time" />
-        <ngx-mat-timepicker #timepicker></ngx-mat-timepicker>
+        <input matInput [ngxMatTimepicker]="timepicker" formControlName="time" placeholder="Select Time" readonly />
+        <ngx-mat-timepicker #timepicker (timeSet)="onTimeChange($event)"></ngx-mat-timepicker>
         <mat-error *ngIf="scheduleForm.get('time')?.hasError('required')">
           Time is required
         </mat-error>

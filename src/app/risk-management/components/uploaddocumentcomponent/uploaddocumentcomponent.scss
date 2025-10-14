@@ -1,0 +1,65 @@
+/* Container & Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 16px; /* spacing between items */
+}
+
+.grid-item {
+  width: 100%;
+}
+
+/* Make full-span items take both columns */
+.full-span {
+  grid-column: 1 / -1;
+}
+
+/* File Upload Styles */
+.file-label {
+  font-weight: 500;
+  color: #555;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.file-input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.file-hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.file-error {
+  font-size: 12px;
+  color: red;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.btn-cancel {
+  margin-right: 0.5rem;
+  color: red !important;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  background-color: color-mix(in srgb, var(--primary) 90%, transparent);
+}
+
+/* Responsive: Single column for mobile */
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+}

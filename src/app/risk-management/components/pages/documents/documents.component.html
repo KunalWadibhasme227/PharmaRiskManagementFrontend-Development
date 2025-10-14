@@ -1,6 +1,7 @@
 <div class="documents-page">
-  <!-- <app-sidebar [activeModule]="activeModule" (moduleChange)="onModuleChange($event)"></app-sidebar>
-   -->
+  <!-- Sidebar (optional) -->
+  <!-- <app-sidebar [activeModule]="activeModule" (moduleChange)="onModuleChange($event)"></app-sidebar> -->
+
   <div class="documents-content">
     <app-dashboard-header
       title="Document Management"
@@ -10,22 +11,28 @@
     <main class="documents-main">
       <app-tabs [value]="activeTab" (valueChange)="onTabChange($event)" className="documents-tabs">
         <app-tabs-list className="tabs-list-3">
-          <app-tabs-trigger value="documents" [isActive]="activeTab === 'documents'" (tabClick)="onTabChange($event)">All Documents</app-tabs-trigger>
-          <app-tabs-trigger value="categories" [isActive]="activeTab === 'categories'" (tabClick)="onTabChange($event)">Categories</app-tabs-trigger>
-          <app-tabs-trigger value="workflows" [isActive]="activeTab === 'workflows'" (tabClick)="onTabChange($event)">Workflows</app-tabs-trigger>
+          <app-tabs-trigger value="documents" [isActive]="activeTab === 'documents'" (tabClick)="onTabChange($event)">
+            All Documents
+          </app-tabs-trigger>
+          <app-tabs-trigger value="categories" [isActive]="activeTab === 'categories'" (tabClick)="onTabChange($event)">
+            Categories
+          </app-tabs-trigger>
+          <app-tabs-trigger value="workflows" [isActive]="activeTab === 'workflows'" (tabClick)="onTabChange($event)">
+            Workflows
+          </app-tabs-trigger>
         </app-tabs-list>
 
+        <!-- Documents Tab -->
         <app-tabs-content value="documents" [isActive]="activeTab === 'documents'" className="documents-tab-content">
-          <!-- Search and Filter -->
+          <!-- Search and Upload -->
           <div class="search-filter-section">
-           <div class="search-container">
+            <div class="search-container">
               <app-input
                 placeholder="Search documents..."
                 [value]="searchTerm"
                 (onInput)="onSearchChange($event)"
                 className="search-input">
               </app-input>
-
               <span class="search-icon">🔍</span>
 
               <app-button variant="outline" size="sm" className="filter-button">
@@ -33,7 +40,6 @@
                 Filter
               </app-button>
             </div>
-
 
             <app-button (onClick)="onUploadDocument()" className="upload-button">
               <span class="button-icon">📤</span>
@@ -43,23 +49,29 @@
 
           <!-- Documents List -->
           <div class="documents-list">
-            <app-card
-              *ngFor="let document of documents; trackBy: trackByDocumentId"
-              className="document-card">
+            <div *ngIf="documents.length === 0" class="no-documents">
+              <p>No documents found.</p>
+            </div>
+
+            <app-card *ngFor="let document of documents; trackBy: trackByDocumentId" className="document-card">
               <app-card-header>
                 <div class="document-header">
                   <div class="document-info">
                     <div class="document-icon">📄</div>
                     <div class="document-details">
-                      <app-card-title className="document-name">{{ document.name }}</app-card-title>
-                      <app-card-description>{{ document.supplier }} • {{ document.category }}</app-card-description>
+                      <app-card-title className="document-name">{{ document.documentName }}</app-card-title>
+                      <app-card-description>
+                        {{ document.categoryName || 'N/A' }}
+                      </app-card-description>
                     </div>
                   </div>
+
                   <app-badge [variant]="getStatusBadgeVariant(document.status)">
                     {{ document.status }}
                   </app-badge>
                 </div>
               </app-card-header>
+
               <app-card-content>
                 <div class="document-metrics">
                   <div class="metric-item">
@@ -68,28 +80,36 @@
                   </div>
                   <div class="metric-item">
                     <p class="metric-label">Upload Date</p>
-                    <p class="metric-value">{{ document.uploadDate }}</p>
+                    <p class="metric-value">{{ document.createdDate | date:'dd-MM-yyyy' }}</p>
                   </div>
                   <div class="metric-item">
                     <p class="metric-label">Expiry Date</p>
-                    <p class="metric-value">{{ document.expiryDate }}</p>
+                    <p class="metric-value">
+                      {{ document.expiryDate ? (document.expiryDate | date:'dd-MM-yyyy') : 'N/A' }}
+                    </p>
                   </div>
                   <div class="metric-item">
                     <p class="metric-label">File Size</p>
-                    <p class="metric-value">{{ document.size }}</p>
+                    <p class="metric-value">
+                        {{ document.fileSizeKB ? document.fileSizeKB + ' KB' : 'N/A' }}
+                    </p>
                   </div>
                 </div>
+
                 <div class="document-actions">
-                  <app-button variant="outline" size="sm" (onClick)="onViewDocument(document)">
+                  <app-button variant="outline" size="sm" (onClick)="onViewDocument(document.documentId)">
                     <span class="action-icon">👁️</span>
                     View
                   </app-button>
+
+
                   <app-button variant="outline" size="sm" (onClick)="onDownloadDocument(document)">
                     <span class="action-icon">⬇️</span>
                     Download
                   </app-button>
-                  <app-button variant="outline" size="sm" (onClick)="onEditDocument(document)">
-                    Edit
+
+                  <app-button variant="outline" size="sm" (onClick)="onEditDocument(document.documentId)">
+                    ✏️ Edit
                   </app-button>
                 </div>
               </app-card-content>
@@ -97,11 +117,10 @@
           </div>
         </app-tabs-content>
 
+        <!-- Categories Tab -->
         <app-tabs-content value="categories" [isActive]="activeTab === 'categories'" className="categories-tab-content">
           <div class="categories-grid">
-            <app-card
-              *ngFor="let category of categories; trackBy: trackByCategoryIndex"
-              className="category-card">
+            <app-card *ngFor="let category of categories; trackBy: trackByCategoryIndex" className="category-card">
               <app-card-header>
                 <app-card-title className="category-name">{{ category.name }}</app-card-title>
                 <app-card-description>{{ category.count }} total documents</app-card-description>
@@ -125,6 +144,7 @@
           </div>
         </app-tabs-content>
 
+        <!-- Workflows Tab -->
         <app-tabs-content value="workflows" [isActive]="activeTab === 'workflows'" className="workflows-tab-content">
           <app-card>
             <app-card-header>

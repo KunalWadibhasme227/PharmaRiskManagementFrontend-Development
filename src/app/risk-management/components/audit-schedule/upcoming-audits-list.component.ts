@@ -42,7 +42,7 @@ export class UpcomingAuditsListComponent {
   searchTerm = '';
   filterStatus = 'all';
   isScheduleModalOpen = false;
-pageNumber = 1;
+  pageNumber = 1;
   pageSize = 5;
   totalRecords = 0;
   loading = false;
@@ -152,9 +152,9 @@ getStatusBadgeText(status: number): string {
   }
 
   onViewDetails(audit: any): void {
-  this.supplierState.setSupplier(audit);
-  this.router.navigate(['/audits/view']);
-}
+    this.supplierState.setSupplier(audit);
+    this.router.navigate(['/audits/view']);
+  }
 
  onReschedule(auditId: string): void {
   // if (!audit) return;

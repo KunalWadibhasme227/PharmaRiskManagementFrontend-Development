@@ -20,7 +20,7 @@ import { ScheduleAuditService } from '../../../shared/services/scheduleaudit/sch
 import { SupplierListRequest } from '../../../models/supplier.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
-
+import { DatePipe } from '@angular/common';
 export interface ScheduleAuditFormData {
   auditId: string;
   auditTitle: string;
@@ -60,6 +60,7 @@ export class Scheduleauditscomponent {
   @ViewChild('supplierDropdown', { static: false }) supplierDropdownRef!: ElementRef;
   @ViewChild('auditorDropdown', { static: false }) auditorDropdownRef!: ElementRef;
   @ViewChild('auditTypeDropdown', { static: false }) auditTypeDropdownRef!: ElementRef;
+  @ViewChild('timepicker') timePicker!: any;
 
   scheduleForm!: FormGroup;
 
@@ -67,7 +68,7 @@ export class Scheduleauditscomponent {
   auditTypes: any[] = [];
   suppliers: any[] = [];
   audits: any[] = []
-
+  today: Date = new Date();
   currentDate: string = new Date().toISOString().split('T')[0];
   audit?: any;
   editMode: boolean = false;
@@ -158,23 +159,46 @@ export class Scheduleauditscomponent {
     return `${hours}:${minutes}`;
   }
 
+  // private combineDateTimeToUTC(date: Date, time: string): string {
+  //   if (!date || !time) return '';
+
+  //   // Extract hours and minutes from "3:00 PM"
+  //   const [timePart, modifier] = time.split(' ');
+  //   let [hours, minutes] = timePart.split(':').map(Number);
+
+  //   if (modifier === 'PM' && hours < 12) hours += 12;
+  //   if (modifier === 'AM' && hours === 12) hours = 0;
+
+  //   // Combine into a new Date object
+  //   const combined = new Date(date);
+  //   combined.setHours(hours, minutes, 0, 0);
+
+  //   // Convert to UTC ISO string
+  //   return combined.toISOString();
+  // }
+
   private combineDateTimeToUTC(date: Date, time: string): string {
-    if (!date || !time) return '';
-
-    // Extract hours and minutes from "3:00 PM"
-    const [timePart, modifier] = time.split(' ');
-    let [hours, minutes] = timePart.split(':').map(Number);
-
-    if (modifier === 'PM' && hours < 12) hours += 12;
-    if (modifier === 'AM' && hours === 12) hours = 0;
-
-    // Combine into a new Date object
-    const combined = new Date(date);
-    combined.setHours(hours, minutes, 0, 0);
-
-    // Convert to UTC ISO string
-    return combined.toISOString();
-  }
+  if (!date || !time) return '';
+ 
+  // Extract hours and minutes from "3:00 PM"
+  const [timePart, modifier] = time.split(' ');
+  let [hours, minutes] = timePart.split(':').map(Number);
+ 
+  if (modifier === 'PM' && hours < 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
+ 
+  const combined = new Date(date);
+  combined.setHours(hours, minutes, 0, 0);
+ 
+  // ✅ Return formatted local date-time without converting to UTC
+  const year = combined.getFullYear();
+  const month = String(combined.getMonth() + 1).padStart(2, '0');
+  const day = String(combined.getDate()).padStart(2, '0');
+  const hh = String(hours).padStart(2, '0');
+  const mm = String(minutes).padStart(2, '0');
+ 
+  return `${year}-${month}-${day}T${hh}:${mm}:00`; // no "Z" suffix
+ }
 
 
   onCancel() {
@@ -183,11 +207,11 @@ export class Scheduleauditscomponent {
  
   onSubmit(): void {
     console.log("Audit details : ", this.scheduleForm.value);
-    if (this.scheduleForm.invalid) {
+    if (this.scheduleForm.invalid && !this.istimevalid) {
       this.notify.Error('Please fill in all required fields');
       return;
     }
-    
+
     const { auditId, auditTitle, date, time, supplier, auditor, auditType, comment } = this.scheduleForm.value;
     const utcDateTime = this.combineDateTimeToUTC(date, time);
 
@@ -295,38 +319,106 @@ export class Scheduleauditscomponent {
     });
   }
 
-   onTimeChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.scheduleForm.value.time = target.value;
+  
+  onTimeChange(event: any): void {
+  let selectedTimeStr: string = '';
 
-    const today = new Date();
-    const selectedDate = new Date(this.scheduleForm.value.date);
-
-    const isToday = selectedDate.getFullYear() === today.getFullYear() &&
-      selectedDate.getMonth() === today.getMonth() &&
-      selectedDate.getDate() === today.getDate();
-
-    if (isToday) {
-      // Parse AM/PM time to 24h Date
-      const [time, modifier] = target.value.split(" "); // "03:15", "PM"
-      let [hours, minutes] = time.split(":").map(Number);
-
-      if (modifier === "PM" && hours < 12) hours += 12;
-      if (modifier === "AM" && hours === 12) hours = 0;
-
-      const selectedTime = new Date(selectedDate);
-      selectedTime.setHours(hours, minutes, 0, 0);
-
-      if (selectedTime < today) {
-        this.istimevalid = false;
-        this.notify.Warning("Please select a valid future time");
-        this.scheduleForm.value.time = '';
-      }
-      else {
-        this.istimevalid = true;
-      }
-    }
+  // Get time from event (depends on ngx-mat-timepicker version)
+  if (typeof event === 'string') {
+    selectedTimeStr = event;
+  } else if (event?.value) {
+    selectedTimeStr = event.value;
+  } else {
+    return;
   }
+  
+
+  const datePipe = new DatePipe('en-US');
+  const formattedTime = datePipe.transform(new Date(`1970-01-01 ${selectedTimeStr}`), 'HH:mm');
+  this.scheduleForm.patchValue({ time: formattedTime });
+
+  const selectedDate = new Date(this.scheduleForm.value.date);
+  const today = new Date();
+
+  if (!formattedTime || !selectedDate) {
+    this.istimevalid = true;
+    return;
+  }
+
+  // Check if selected date is today
+  const isToday = selectedDate.toDateString() === today.toDateString();
+
+  // Parse hours & minutes
+  let [hours, minutes] = formattedTime.split(':').map(Number);
+
+  const selectedDateTime = new Date(selectedDate);
+  selectedDateTime.setHours(hours, minutes, 0, 0);
+
+  if (isToday && selectedDateTime < today) {
+    this.istimevalid = false;
+    this.notify.Warning('You cannot select a past time for today.');
+    
+    // Reset field safely
+    this.scheduleForm.get('time')?.setValue(null, { emitEvent: false });
+    setTimeout(() => this.timePicker.open(), 0); // optional: reopen timepicker
+  } else {
+    this.istimevalid = true;
+  }
+}
+
+
+
+
+//#region utility function
+
+convertTo24Hour(time12h: string): string | null {
+  // Parse time with today's date just to use DatePipe
+  const datePipe = new DatePipe('en-US');
+  const date = new Date(`1970-01-01 ${time12h}`);
+  return datePipe.transform(date, 'HH:mm'); // returns 'HH:mm' 24-hour format
+}
+
+//#endregion
+
+
+dateChange(e:any){
+ if(this.timePicker.defaultTime) this.onTimeChange(this.timePicker.defaultTime)
+}
+
+
+
+  //  onTimeChange(event: Event): void {
+  //   const target = event.target as HTMLInputElement;
+  //   this.scheduleForm.value.time = target.value;
+
+  //   const today = new Date();
+  //   const selectedDate = new Date(this.scheduleForm.value.date);
+
+  //   const isToday = selectedDate.getFullYear() === today.getFullYear() &&
+  //     selectedDate.getMonth() === today.getMonth() &&
+  //     selectedDate.getDate() === today.getDate();
+
+  //   if (isToday) {
+  //     // Parse AM/PM time to 24h Date
+  //     const [time, modifier] = target.value.split(" "); // "03:15", "PM"
+  //     let [hours, minutes] = time.split(":").map(Number);
+
+  //     if (modifier === "PM" && hours < 12) hours += 12;
+  //     if (modifier === "AM" && hours === 12) hours = 0;
+
+  //     const selectedTime = new Date(selectedDate);
+  //     selectedTime.setHours(hours, minutes, 0, 0);
+
+  //     if (selectedTime < today) {
+  //       this.istimevalid = false;
+  //       this.notify.Warning("Please select a valid future time");
+  //       this.scheduleForm.value.time = '';
+  //     }
+  //     else {
+  //       this.istimevalid = true;
+  //     }
+  //   }
+  //}
 }
 
 // import { Component, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef } from '@angular/core';

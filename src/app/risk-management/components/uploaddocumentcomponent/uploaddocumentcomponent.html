@@ -1,1 +1,104 @@
-<p>uploaddocumentcomponent works!</p>
+<div class="dialog-wrapper">
+  <h2 mat-dialog-title>Upload Document</h2>
+  <mat-dialog-content>
+    <form [formGroup]="documentForm" class="form-grid">
+
+      <!-- Left Column: Document Title -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Document Title</mat-label>
+        <input matInput formControlName="DocumentName" maxlength="50" />
+        <mat-error *ngIf="documentForm.get('DocumentName')?.hasError('required')">
+          Document Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Right Column: Expiry Date -->
+       <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Expiry Date</mat-label>
+        <input matInput [matDatepicker]="datepicker" [min]="today" formControlName="ExpiryDate" />
+        <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker></mat-datepicker>
+        <mat-error *ngIf="documentForm.get('ExpiryDate')?.hasError('required')">
+          Expiry Date is required
+        </mat-error>
+      </mat-form-field>
+
+
+      <!-- Left Column: Category Type -->
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Category Type</mat-label>
+        <mat-select formControlName="CategoryId">
+          <mat-option *ngFor="let type of Category" [value]="type.categoryId">{{ type.categoryName }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="documentForm.get('CategoryId')?.hasError('required')">
+          Category Type is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Right Column: Audit Type -->
+       <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Audit Type</mat-label>
+        <mat-select formControlName="AuditId">
+          <mat-option *ngFor="let type of Audit" [value]="type.auditTypeId">{{ type.typeName }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="documentForm.get('AuditId')?.hasError('required')">
+          Audit Type is required
+        </mat-error>
+      </mat-form-field>
+<!-- 
+      <mat-form-field appearance="fill" class="grid-item">
+        <mat-label>Audit Type</mat-label>
+        <mat-select formControlName="AuditId">
+          <mat-option *ngFor="let type of Audit" [value]="type.auditTypeId">{{ type.typeName }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="documentForm.get('AuditId')?.hasError('required')">
+          Audit Type is required
+        </mat-error>
+      </mat-form-field> -->
+
+      <!-- Full Width: Description -->
+      <mat-form-field appearance="fill" class="grid-item full-span">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="Description" rows="3" maxlength="200"></textarea>
+      </mat-form-field>
+
+      <!-- Full Width: File Upload -->
+      <!-- <div class="grid-item full-span">
+        <label class="file-label">Upload Document</label>
+        <input type="file" (change)="onFileSelected($event)" class="file-input" />
+        <mat-hint *ngIf="existingFilePath">
+          Current File: 
+          <a [href]="existingFilePath" target="_blank">{{ existingFilePath | slice:-30 }}</a>
+        </mat-hint>
+        <div *ngIf="selectedFile" class="file-hint">{{ selectedFile.name }}</div>
+        <div *ngIf="fileError" class="file-error">{{ fileError }}</div>
+      </div> -->
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Upload Document</mat-label>
+        
+        <input matInput [value]="selectedFile?.name || existingFileName" readonly>
+
+        <input type="file" hidden (change)="onFileSelected($event)" #fileInput>
+        
+        <button mat-icon-button matSuffix type="button" (click)="fileInput.click()">
+          <mat-icon>attach_file</mat-icon>
+        </button>
+
+        <mat-hint *ngIf="existingFilePath && !selectedFile">
+          Current File: 
+          <a [href]="existingFilePath" target="_blank">{{ existingFilePath | slice:-30 }}</a>
+        </mat-hint>
+
+        <mat-error *ngIf="fileError">{{ fileError }}</mat-error>
+      </mat-form-field>
+
+
+    </form>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button class="btn-primary" (click)="onSubmit()" [disabled]="documentForm.invalid">Save</button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,55 @@
+<div class="suppliers-page">
+  <div class="suppliers-content">
+    <!-- Dashboard Header -->
+    <app-dashboard-header
+      title="Upload Document"
+      subtitle="Module to manage Document">
+    </app-dashboard-header>
+  </div>
+</div>
+
+<div class="supplier-details-shell">
+  <!-- Back Button -->
+  <div class="details-topbar">
+    <button class="back-btn" (click)="goBack()">← Back to list</button>
+  </div>
+
+  <!-- Details Card -->
+  <app-card class="details-card" *ngIf="documentDetails">
+    <app-card-content>
+      <div class="detail-grid">
+        <div class="field">
+          <div class="label">Document Name:</div>
+          <div class="value">{{ documentDetails.documentName }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Category:</div>
+          <div class="value">{{ documentDetails.categoryName }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Audit:</div>
+          <div class="value">{{ documentDetails.auditName }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Description:</div>
+          <div class="value">{{ documentDetails.description }}</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Expiry Date:</div>
+          <div class="value">
+            {{ documentDetails.expiryDate | date: 'dd-MM-yyyy' }}
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Status:</div>
+          <div class="value">{{ documentDetails.status }}</div>
+        </div>
+      </div>
+    </app-card-content>
+  </app-card>
+</div>

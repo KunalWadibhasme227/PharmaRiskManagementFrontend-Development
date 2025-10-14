@@ -1,0 +1,139 @@
+
+/* Shell */
+.supplier-details-shell { padding: 1rem; }
+
+/* Topbar */
+.details-topbar {
+  margin-bottom: 0.75rem;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: 0.25rem 0;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+fc {
+  max-width: 1100px;
+  margin: 40px auto;
+}
+
+/* Title row */
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.title-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* one line per detail: label : value */
+.detail-row {
+  display: grid;
+  grid-template-columns: 160px 12px 1fr; /* label | colon | value */
+  gap: 0.5rem;
+  align-items: start;
+  padding: 0.25rem 0;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-align: left;
+}
+
+.sep {
+  text-align: center;
+  color: var(--muted-foreground);
+  font-weight: 600;
+  padding-right: 2px;
+}
+
+.value {
+  color: var(--foreground);
+  word-break: break-word;
+}
+
+/* responsive: collapse to 2 columns on narrow screens */
+@media (max-width: 640px) {
+  .detail-row {
+    grid-template-columns: 120px 1fr; /* label + value (hide sep) */
+  }
+  .sep { display: none; }
+}
+
+.company-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.subtitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+}
+
+.badges { display: flex; gap: 0.5rem; align-items: center; }
+
+/* Actions */
+.title-actions { display:flex; gap:0.5rem; align-items:center; }
+
+/* Card */
+.details-card {
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 18px rgba(20,20,20,0.04);
+  border: 1px solid var(--border);
+}
+
+/* Grid layout */
+.detail-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr; /* mobile default */
+  font-size: 0.95rem;
+  align-items: start;
+  padding: 0.5rem 0;
+}
+
+/* On larger screens show two label/value columns (label + value per column) */
+@media (min-width: 720px) {
+  .detail-grid {
+    grid-template-columns: 200px 1fr 200px 1fr;
+    column-gap: 1.5rem;
+  }
+}
+
+/* Field: label + value */
+.field { display: contents; }
+.field .label {
+  color: var(--muted-foreground);
+  font-weight: 600;
+  text-transform: none;
+  padding-right: 0.5rem;
+  font-size: 0.85rem;
+}
+.field .value {
+  color: var(--foreground);
+  word-break: break-word;
+}
+
+/* Make a field span full width (e.g. business description) */
+.field.full .label, .field.full .value {
+  grid-column: 1 / -1;
+}
+
+/* small tweaks */
+.detail-grid .value { padding-bottom: 0.25rem; }
